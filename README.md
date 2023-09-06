@@ -3,11 +3,11 @@
 
 安装项目到当前目录
 ```
-git clone https://github.com/mrlihx/epay.git ./
+git clone -b epay_2032 https://github.com/mrlihx/epay.git ./
 ```
 国内服务器用
 ```
-git clone https://ghproxy.com/https://github.com/mrlihx/epay.git ./
+git clone -b epay_2032 https://ghproxy.com/https://github.com/mrlihx/epay.git ./
 ```
 更新项目
 ```
