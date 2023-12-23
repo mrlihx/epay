@@ -16,6 +16,9 @@ if($type == 1){
 }elseif($type == 4){
 	$typename = '银行卡';
 	$method = '支付宝单笔转账到银行卡接口';
+}elseif($type == 5){
+    $typename = 'USDT';
+    $method = 'TRON波场发送代币';
 }
 $title=$typename.'批量转账';
 include './head.php';
@@ -81,11 +84,13 @@ function Transfer(){
 var transnum = 0;
 $(document).ready(function(){
 	var allmoney = 0;
+	var allmoneyUsdt = 0;
 	var items = $('.money');
-	for (i = 0; i < items.length; i++) {
+	for (var i = 0; i < items.length; i++) {
 		allmoney+=parseFloat(items[i].innerHTML);
 	}
-	$('#allmoney').html('总金额:'+allmoney.toFixed(2));
+    allmoneyUsdt = allmoney / <?php echo $conf['settle_usdt_rate'] ?> - i * <?php echo $conf['settle_usdt_miner_fee'] ?>;
+	$('#allmoney').html('总金额:'+allmoney.toFixed(2) + ' / ' + allmoneyUsdt.toFixed(2) + 'u');
 	$('#startsend').click(function(){
 		var self=$(this);
 		if (self.attr("data-lock") === "true") return;
@@ -173,6 +178,8 @@ var xiha={
 			<?php
 			echo '<tr><td colspan="6" align="center">总共<span id="hyall">'.count($list).'<span>个记录,已经处理<span id="hydx">0</span>个记录！</td></tr>';
 			foreach($list as $row) {
+                $row['realmoney'] = $row['realmoney'] . " / " . round($row['realmoney'] / $conf['settle_usdt_rate'] - $conf['settle_usdt_miner_fee'], 2) . "u";
+
 			echo '<tr><td uin="'.$row['id'].'"><input name="uins" type="checkbox" id="uins" class="uins" value="'.$row['id'].'" '.($row['transfer_status']!=1?'checked':null).'>'.$row['id'].'</td><td>'.$row['uid'].'</td><td>'.$row['account'].'</td><td>'.$row['username'].'</td><td class="money">'.$row['realmoney'].'</td><td id="id'.$row['id'].'" uin="'.$row['id'].'" class="nocheck recheck" align="center">'.($row['transfer_status']!=1?'<span class="btn btn-xs btn-block btn-primary">立即转账</span>':'<font color="green">已完成</font>').'</td></tr><tr><td><span style="color:silver;">结果</span></td><td colspan="5" id="res'.$row['id'].'"><font color="blue">'.($row['transfer_status']==1?'转账订单号:'.$row['transfer_result'].' 支付时间:'.$row['transfer_date']:$row['transfer_result']).'</font></td></tr>';
 			}
 			?>

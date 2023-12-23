@@ -252,3 +252,29 @@ ALTER TABLE `pre_user`
 ADD COLUMN `telegram` varchar(32) DEFAULT '';
 ALTER TABLE `pre_user`
 ADD COLUMN `aff` tinyint(1) NOT NULL DEFAULT '0';
+
+
+ALTER TABLE `pre_plugin`
+ADD COLUMN `transtypes` varchar(50) DEFAULT NULL;
+
+ALTER TABLE `pre_regcode`
+ADD COLUMN `scene` varchar(20) NOT NULL DEFAULT '';
+
+ALTER TABLE `pre_group`
+ADD COLUMN `config` text DEFAULT NULL,
+DROP COLUMN `settle_open`,
+DROP COLUMN `settle_type`,
+DROP COLUMN `settle_rate`;
+
+UPDATE pre_config SET v='0' WHERE k='settle_type' AND v='2';
+
+CREATE TABLE IF NOT EXISTS `pre_invitecode` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `code` varchar(40) NOT NULL,
+  `addtime` datetime NOT NULL,
+  `usetime` datetime DEFAULT NULL,
+  `uid` int(11) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 0,
+ PRIMARY KEY (`id`),
+ KEY `code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -30,7 +30,7 @@ include './head.php';
 				<input type="text" class="form-control" name="value" placeholder="收款账号/姓名">
 			</div>
 			<div class="form-group">
-				<select name="type" class="form-control"><option value="">所有付款方式</option><option value="alipay">支付宝</option><option value="wxpay">微信</option><option value="qqpay">QQ钱包</option><option value="bank">银行卡</option></select>
+				<select name="type" class="form-control"><option value="">所有付款方式</option><option value="alipay">支付宝</option><option value="wxpay">微信</option><option value="qqpay">QQ钱包</option><option value="bank">银行卡</option><option value="usdt">USDT</option></select>
 			</div>
 			<div class="form-group">
 				<select name="dstatus" class="form-control"><option value="-1">全部状态</option><option value="0">状态正在处理</option><option value="1">状态转账成功</option><option value="2">状态转账失败</option></select>

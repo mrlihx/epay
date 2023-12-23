@@ -212,13 +212,13 @@ switch($conf['user_style']){
                         <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
                             <span>其他</span>
                         </li>
-                        <?php if($userrow['aff']==1){?>
-                        <li class="<?php echo checkIfActive('aff')?>">
-                            <a href="aff.php">
-                                <i class="glyphicon glyphicon-share-alt"></i>
-                                <span>邀请好友</span>
-                            </a>
-                        </li>
+                        <?php if($conf['invite_open']==1){?>
+                            <li class="<?php echo checkIfActive('invite')?>">
+                                <a href="invite.php">
+                                    <i class="fa fa-share-alt fa-fw"></i>
+                                    <span>邀请返现</span>
+                                </a>
+                            </li>
                         <?php }?>
                         <?php if($conf['user_transfer']==1){?>
                             <li class="<?php echo checkIfActive('transfer,transfer_add')?>">

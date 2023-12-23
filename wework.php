@@ -97,6 +97,7 @@ if($msg['MsgType'] == 'event' && $msg['Event'] == 'kf_msg_or_event'){
             if(!empty($orderid)){
                 $payurl = $DB->findColumn('wxkflog', 'payurl', ['trade_no' => $orderid]);
                 if($payurl){
+                    $payurl = dwz($payurl); // 短网址
                     $wework->sendTextMsg($row['external_userid'], $row['open_kfid'], $payurl);
                 }else{
                     $wework->sendTextMsg($row['external_userid'], $row['open_kfid'], '订单支付链接不存在。');

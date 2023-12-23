@@ -767,23 +767,28 @@ switch ($act) {
         $total = $DB->getColumn("SELECT count(*) from pre_settle WHERE{$sql}");
         $list = $DB->getAll("SELECT * FROM pre_settle WHERE{$sql} order by id desc limit $offset,$limit");
 
-        if (count($list)>0){
-            if($list[0]['type'] == "5" || $list[0]['type'] == "6"){
-                $list[0]['realmoney'] = $list[0]['realmoney'] . " / " . round($list[0]['realmoney'] / $conf['settle_usdt_rate'], 2) . "u";
-            }
-        }
-//        $i = 0;
-//        for ($id = count($list); $id >= 1; $id--) {
-//            $ids[] = $id;
-//        }
-//        foreach ($list as $row){
-//            $row['id'] = $ids[$i];
-//            if($row['type'] == "5" || $row['type'] == "6"){
-//                $row['realmoney'] = $row['realmoney'] . " / " . round($row['realmoney'] / $conf['settle_usdt_rate'], 2) . "u";
+//        if (count($list)>0){
+//            if($list[0]['type'] == "5" || $list[0]['type'] == "6"){
+//                $list[0]['realmoney'] = $list[0]['realmoney'] . " / " . round($list[0]['realmoney'] / $conf['settle_usdt_rate'], 2) . "u";
 //            }
-//            $i++;
-//            $newlist[] = $row;
 //        }
+
+        $i = 0;
+        for ($id = count($list); $id >= 1; $id--) {
+            $ids[] = $id;
+        }
+        foreach ($list as $row){
+            $row['id'] = $ids[$i];
+            if($row['type'] == "5" || $row['type'] == "6"){
+                if ((new DateTime($row['addtime']))->format('Y-m-d') === (new DateTime())->format('Y-m-d')){
+                    $row['realmoney'] = $row['realmoney'] . " / " . round($row['realmoney'] / $conf['settle_usdt_rate'] - $conf['settle_usdt_miner_fee'], 2) . "u";
+                }
+            }
+            $i++;
+            $newlist[] = $row;
+        }
+        $list = $newlist;
+
         exit(json_encode(['total' => $total, 'rows' => $list]));
         break;
     case 'transferList':
@@ -877,6 +882,29 @@ switch ($act) {
         } else {
             exit('{"code":-1,"msg":"退款失败：' . $message . '"}');
         }
+        break;
+
+    case 'inviteStat':
+        $lastday=date("Y-m-d",strtotime("-1 day")).' 00:00:00';
+        $today=date("Y-m-d").' 00:00:00';
+
+        $invite_users=$DB->getColumn("SELECT count(*) FROM pre_user WHERE upid={$uid}");
+        $income_today=$DB->getColumn("SELECT sum(money) FROM pre_record WHERE uid={$uid} AND type='邀请返现' AND date>='$today'");
+        $income_today=round($income_today,2);
+        $income_lastday=$DB->getColumn("SELECT sum(money) FROM pre_record WHERE uid={$uid} AND type='邀请返现' AND date>='$lastday' AND date<'$today'");
+        $income_lastday=round($income_lastday,2);
+
+        $result=['code'=>0, 'invite_users'=>$invite_users, 'income_today'=>$income_today, 'income_lastday'=>$income_lastday];
+        exit(json_encode($result));
+        break;
+    case 'inviteList':
+        $sql=" upid=$uid";
+        $offset = intval($_POST['offset']);
+        $limit = intval($_POST['limit']);
+        $total = $DB->getColumn("SELECT count(*) from pre_user WHERE{$sql}");
+        $list = $DB->getAll("SELECT uid,upid,addtime,lasttime,status FROM pre_user WHERE{$sql} order by uid desc limit $offset,$limit");
+
+        exit(json_encode(['total'=>$total, 'rows'=>$list]));
         break;
 
     default:

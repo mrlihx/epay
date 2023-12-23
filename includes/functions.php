@@ -507,7 +507,8 @@ function do_notify($url){
     global $conf;
     if($conf['proxy_url_open'] == 2) $url = $conf['proxy_url'].$url;
     $return = curl_get($url);
-    if(strpos($return,'success')!==false || strpos($return,'SUCCESS')!==false || strpos($return,'Success')!==false){
+    if(strpos($return,'OK')!==false || strpos($return,'Ok')!==false || strpos($return,'ok')!==false
+        || strpos($return,'success')!==false || strpos($return,'SUCCESS')!==false || strpos($return,'Success')!==false){
         return true;
     }else{
         return false;
@@ -580,7 +581,7 @@ function processOrder($srow,$notify=true){
                 changeUserMoney($srow['uid'], $reducemoney, false, '订单服务费', $srow['trade_no']);
         }else{
             changeUserMoney($srow['uid'], $addmoney, true, '订单收入', $srow['trade_no']);
-            revenueSharing($srow);
+//            revenueSharing($srow);
         }
         /*if(preg_match('/X(\d+)\!(\d+)X/',$srow['name'],$match)){
             if($match[1] >= 1000 && $match[2] > 0 && $match[2] < 100){
@@ -600,6 +601,26 @@ function processOrder($srow,$notify=true){
         $typeRow = $DB->getRow("select * from pre_type where id=:id limit 1", [':id' => $srow['type']]);
         $srow['typeshowname'] = $typeRow['showname'];
         \lib\MsgNotice::send('order', $srow['uid'], ['trade_no'=>$srow['trade_no'], 'out_trade_no'=>$srow['out_trade_no'], 'name'=>$srow['name'], 'money'=>$srow['money'], 'realmoney'=>$srow['realmoney'], 'type'=>$srow['typeshowname'], 'time'=>date('Y-m-d H:i:s'), 'addtime'=>$srow['addtime'], 'notify'=>$srow['notify']]);
+
+        //邀请返现
+        $upid = $DB->findColumn('user', 'upid', ['uid'=>$srow['uid']]);
+        if($upid > 0){
+            $upgid = $DB->findColumn('user', 'gid', ['uid'=>$upid]);
+            $groupconfig = getGroupConfig($upgid);
+            var_dump($conf['invite_rate']);
+            $conf = array_merge($conf, $groupconfig);
+            var_dump($conf['invite_rate']);
+            if($conf['invite_open'] == 1 && !empty($conf['invite_rate'])){
+                $invite_money = round($srow['money'] * $conf['invite_rate'] / 100, 2);
+                var_dump($invite_money);
+
+                if($invite_money > $reducemoney) $invite_money = $reducemoney;
+                if($invite_money > 0){
+                    changeUserMoney($upid, $invite_money, true, '邀请返现', $srow['trade_no']);
+                }
+            }
+        }
+
     }
     if($channel['daytop']>0){
         $cachekey = 'daytop'.$channel['id'].date("Ymd");
@@ -1119,5 +1140,53 @@ function rc4($str, $key, $Encrypt=false) {
         return str_replace("/", "_", $res);
     } else {
         return $res;
+    }
+}
+
+
+function getGroupConfig($gid){
+    global $DB;
+    $input_key = ['settle_rate', 'transfer_rate', 'invite_rate'];
+    $grouprow=$DB->getRow("SELECT config FROM pre_group WHERE gid='{$gid}' LIMIT 1");
+    if(!$grouprow)$grouprow=$DB->getRow("SELECT config FROM pre_group WHERE gid=0 LIMIT 1");
+    $config = [];
+    if(!$grouprow) return $config;
+    if($grouprow['config']){
+        $arr = json_decode($grouprow['config'], true);
+        foreach($arr as $key=>$value){
+            if(in_array($key, $input_key) && !isNullOrEmpty($value) || !in_array($key, $input_key) && $value>0){
+                if($key == 'settle_type') $value = $value-1;
+                $config[$key] = $value;
+            }
+        }
+    }
+    return $config;
+}
+
+
+function get_alipay_userid(){
+    global $conf;
+    if($conf['login_alipay']==0) throw new Exception('未开启支付宝快捷登录');
+    $channel = \lib\Channel::get($conf['login_alipay']);
+    if(!$channel) throw new Exception('当前支付通道信息不存在');
+    $alipay_config = require(PLUGIN_ROOT.$channel['plugin'].'/inc/config.php');
+    $oauth = new \Alipay\AlipayOauthService($alipay_config);
+    if(isset($_GET['auth_code'])){
+        $result = $oauth->getToken($_GET['auth_code']);
+        if(!empty($result['user_id'])){
+            $user_id = $result['user_id'];
+            $user_type = 'userid';
+        }else{
+            $user_id = $result['open_id'];
+            $user_type = 'openid';
+        }
+        return [$user_type, $user_id];
+    }else{
+        if (function_exists('is_https')) {
+            $redirect_uri = (is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        } else {
+            $redirect_uri = ($_SERVER['SERVER_PORT'] == 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        }
+        $oauth->oauth($redirect_uri);
     }
 }

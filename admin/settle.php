@@ -114,6 +114,7 @@ function transfer(batch){
 				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=2&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/wxpay.ico" class="logo">微信批量转账</a>';
 				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=3&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/qqpay.ico" class="logo">QQ钱包批量转账</a>';
 				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=4&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/bank.ico" class="logo">银行卡批量转账</a>';
+				paymsg+='<a class="btn btn-default btn-block" href="transfer_batch.php?type=5&batch='+batch+'" style="margin-top:10px;"><img width="20" src="../assets/icon/usdt.ico" class="logo">USDT批量转账</a>';
 				layer.alert('<center>'+paymsg+'<hr><a class="btn btn-default btn-block" onclick="layer.closeAll()">关闭</a></center>',{
 					btn:[],
 					title:'请选择批量转账方式',

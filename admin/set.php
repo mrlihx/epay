@@ -72,10 +72,10 @@ if($mod=='site'){
 	  <label class="col-sm-2 control-label">用户验证方式</label>
 	  <div class="col-sm-10"><select class="form-control" name="verifytype" default="<?php echo $conf['verifytype']?>"><option value="0">邮箱验证</option><option value="1">手机验证</option></select></div>
 	</div><br/>
-	<div class="form-group">
-	  <label class="col-sm-2 control-label">开放注册</label>
-	  <div class="col-sm-10"><select class="form-control" name="reg_open" default="<?php echo $conf['reg_open']?>"><option value="1">开启</option><option value="0">关闭</option></select></div>
-	</div><br/>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">开放注册</label>
+      <div class="col-sm-10"><select class="form-control" name="reg_open" default="<?php echo $conf['reg_open']?>"><option value="1">开启</option><option value="0">关闭</option><option value="2">仅邀请注册</option></select></div>
+    </div><br/>
 	<div id="setform1" style="<?php echo $conf['reg_open']==0?'display:none;':null; ?>">
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">开启注册审核</label>
@@ -348,11 +348,6 @@ $(document).ready(function(){
 <div class="panel-heading"><h3 class="panel-title">支付相关配置</h3></div>
 <div class="panel-body">
   <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
-      <div class="form-group">
-          <label class="col-sm-3 control-label">商户推广分成比例</label>
-          <div class="col-sm-9"><input type="text" name="commission_rate" value="<?php echo $conf['commission_rate']; ?>" class="form-control"/></div>
-      </div><br/>
-
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">最大支付金额</label>
 	  <div class="col-sm-9"><input type="text" name="pay_maxmoney" value="<?php echo $conf['pay_maxmoney']; ?>" class="form-control"/></div>
@@ -474,6 +469,19 @@ $(document).ready(function(){
 	  <label class="col-sm-3 control-label">人机验证类型</label>
 	  <div class="col-sm-9"><select class="form-control" name="pay_verify_type" default="<?php echo $conf['pay_verify_type']?>"><option value="0">JS跳转验证（速度快）</option><option value="1">极验无感验证（速度慢）</option><option value="2">极验滑动验证（速度慢且体验差）</option></select></div>
 	</div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">手续费最低扣除设置</label>
+      <div class="col-sm-4"><div class="input-group"><input type="text" name="payfee_lessthan" value="<?php echo $conf['payfee_lessthan']; ?>" class="form-control" placeholder="手续费低于多少元时"/><span class="input-group-addon">元</span></div></div>
+      <div class="col-sm-5"><div class="input-group"><input type="text" name="payfee_mincost" value="<?php echo $conf['payfee_mincost']; ?>" class="form-control" placeholder="最低扣除多少元"/><span class="input-group-addon">元</span></div></div>
+    </div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">邀请返现功能</label>
+      <div class="col-sm-9"><select class="form-control" name="invite_open" default="<?php echo $conf['invite_open']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+    </div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">邀请分成比例</label>
+      <div class="col-sm-9"><div class="input-group"><input type="text" name="invite_rate" value="<?php echo $conf['invite_rate']; ?>" class="form-control"/><span class="input-group-addon">%</span></div><font color="green">被邀请用户支付订单，给邀请者分成的比例，分成金额不会超过订单的手续费</font></div>
+    </div><br/>
 	<div class="form-group">
 	  <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
 	 </div>
@@ -546,14 +554,28 @@ $("select[name='pay_verify']").change(function(){
 <div class="panel-heading"><h3 class="panel-title">结算规则配置</h3></div>
 <div class="panel-body">
   <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
-	<div class="form-group">
-	  <label class="col-sm-3 control-label">结算总开关</label>
-	  <div class="col-sm-9"><select class="form-control" name="settle_open" default="<?php echo $conf['settle_open']?>"><option value="0">关闭结算功能</option><option value="1">只开启每日自动结算</option><option value="2">只开启手动申请结算</option><option value="3">开启自动+手动结算</option></select></div>
-	</div><br/>
-	<div class="form-group">
-	  <label class="col-sm-3 control-label">手动申请结算周期</label>
-	  <div class="col-sm-9"><select class="form-control" name="settle_type" default="<?php echo $conf['settle_type']?>"><option value="0">T+0（可提现全部余额）</option><option value="1">T+1（可提现1天前的余额）</option><option value="2">T+0秒到账（申请提现后通过转账接口转账）</option></select><font color="green">该选项只适用于手动申请结算</font></div>
-	</div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">结算总开关</label>
+      <div class="col-sm-9"><select class="form-control" name="settle_open" default="<?php echo $conf['settle_open']?>"><option value="0">关闭结算功能</option><option value="1">只开启每日自动结算</option><option value="2">只开启手动申请结算</option><option value="3">开启自动+手动结算</option></select></div>
+    </div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">结算周期</label>
+      <div class="col-sm-9"><select class="form-control" name="settle_type" default="<?php echo $conf['settle_type']?>"><option value="0">D+0（可结算全部余额）</option><option value="1">D+1（可结算前1天的余额）</option></select></div>
+    </div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">手动结算自动转账</label>
+      <div class="col-sm-9"><select class="form-control" name="settle_transfer" default="<?php echo $conf['settle_transfer']?>"><option value="0">关闭</option><option value="1">开启</option></select><font color="green">如开启，需要先开启企业付款功能</font></div>
+    </div><br/>
+    <div id="settle_transfer_form" style="<?php echo $conf['settle_transfer']!=1?'display:none;':null; ?>">
+      <div class="form-group">
+          <label class="col-sm-3 control-label">超出多少元不自动转账</label>
+          <div class="col-sm-9"><input type="text" name="settle_transfermax" value="<?php echo $conf['settle_transfermax']; ?>" class="form-control" placeholder="留空则不限制最大自动转账金额"/></div>
+      </div><br/>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">每日手动申请次数限制</label>
+      <div class="col-sm-9"><input type="text" name="settle_maxlimit" value="<?php echo $conf['settle_maxlimit']; ?>" class="form-control" placeholder="留空则不限制每日手动申请结算次数"/></div>
+    </div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">最低结算金额</label>
 	  <div class="col-sm-9"><input type="text" name="settle_money" value="<?php echo $conf['settle_money']; ?>" class="form-control"/></div>
@@ -599,6 +621,10 @@ $("select[name='pay_verify']").change(function(){
           <label class="col-sm-3 control-label">USDT汇率</label>
           <div class="col-sm-9"><input type="text" name="settle_usdt_rate" value="<?php echo $conf['settle_usdt_rate']; ?>" class="form-control"/></div>
       </div><br/>
+      <div class="form-group">
+          <label class="col-sm-3 control-label">USDT结算矿工费</label>
+          <div class="col-sm-9"><input type="text" name="settle_usdt_miner_fee" value="<?php echo $conf['settle_usdt_miner_fee']; ?>" class="form-control"/></div>
+      </div><br/>
 
 	<div class="form-group">
 	  <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
@@ -607,6 +633,15 @@ $("select[name='pay_verify']").change(function(){
   </form>
 </div>
 </div>
+<script>
+    $("select[name='settle_transfer']").change(function(){
+        if($(this).val() == 1){
+            $("#settle_transfer_form").show();
+        }else{
+            $("#settle_transfer_form").hide();
+        }
+    });
+</script>
 <?php
 }elseif($mod=='gonggao'){
 ?>
@@ -666,7 +701,7 @@ $("select[name='pay_verify']").change(function(){
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">银行卡转账接口通道</label>
-	  <div class="col-sm-9"><select class="form-control" name="transfer_bank" default="<?php echo $conf['transfer_bank']?>"><option value="0">关闭</option><?php foreach($bank_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为alipay的支付通道。需签约“转账到银行卡”产品。</font></div>
+	  <div class="col-sm-9"><select class="form-control" name="transfer_bank" default="<?php echo $conf['transfer_bank']?>"><option value="0">关闭</option><?php foreach($bank_channel as $channel){echo '<option value="'.$channel['id'].'">'.$channel['name'].'</option>';} ?></select><font color="green">请先添加支付插件为alipay的支付通道。需签约“转账到银行卡”产品。部分其他插件也有付款到银行卡功能</font></div>
 	</div><br/>
 	<div class="form-group">
 	  <label class="col-sm-3 control-label">用户中心代付功能</label>
@@ -680,6 +715,14 @@ $("select[name='pay_verify']").change(function(){
 	  <label class="col-sm-3 control-label">最大代付金额限制</label>
 	  <div class="col-sm-9"><input type="text" name="transfer_maxmoney" value="<?php echo $conf['transfer_maxmoney']; ?>" class="form-control"/></div>
 	</div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">每日对单人最大代付笔数限制</label>
+      <div class="col-sm-9"><input type="text" name="transfer_maxlimit" value="<?php echo $conf['transfer_maxlimit']; ?>" class="form-control"/></div>
+    </div><br/>
+    <div class="form-group">
+      <label class="col-sm-3 control-label">代付手续费</label>
+      <div class="col-sm-9"><div class="input-group"><input type="text" name="transfer_rate" value="<?php echo $conf['transfer_rate']; ?>" class="form-control" placeholder="留空则与结算手续费一样"/><span class="input-group-addon">%</span></div></div>
+    </div><br/>
 	<div class="form-group">
 	  <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
 	 </div>

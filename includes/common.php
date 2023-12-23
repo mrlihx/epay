@@ -3,7 +3,7 @@
 error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR);
 if (defined('IN_CRONLITE')) return;
 define('VERSION', '3059');
-define('DB_VERSION', '2037');
+define('DB_VERSION', '2038');
 define('IN_CRONLITE', true);
 define('SYSTEM_ROOT', dirname(__FILE__) . '/');
 define('ROOT', dirname(SYSTEM_ROOT) . '/');
@@ -15,10 +15,10 @@ $date = date("Y-m-d H:i:s");
 
 if (!isset($nosession) || !$nosession) session_start();
 
-if(!$_SESSION['ref_uid']){
-    $_SESSION['ref_uid'] = $_GET['ref'];
-}
-$ref_uid = $_SESSION['ref_uid'] ?? 0;
+//if(!$_SESSION['ref_uid']){
+//    $_SESSION['ref_uid'] = $_GET['ref'];
+//}
+//$ref_uid = $_SESSION['ref_uid'] ?? 0;
 
 
 if (!function_exists("is_https")) {
@@ -92,6 +92,15 @@ include_once(SYSTEM_ROOT . "functions.php");
 include_once(SYSTEM_ROOT . "member.php");
 
 require_once SYSTEM_ROOT . "vendor/autoload.php";
+
+
+//if(isset($_GET['invite'])){
+//    $invite_code = trim($_GET['invite']);
+//    $uid = get_invite_uid($invite_code);
+//    if($uid && is_numeric($uid)){
+//        $_SESSION['invite_uid'] = intval($uid);
+//    }
+//}
 
 if (!file_exists(ROOT . 'install/install.lock') && file_exists(ROOT . 'install/index.php')) {
     sysmsg('<h2>检测到无 install.lock 文件</h2><ul><li><font size="4">如果您尚未安装本程序，请<a href="/install/">前往安装</a></font></li><li><font size="4">如果您已经安装本程序，请手动放置一个空的 install.lock 文件到 /install 文件夹下，<b>为了您站点安全，在您完成它之前我们不会工作。</b></font></li></ul><br/><h4>为什么必须建立 install.lock 文件？</h4>它是安装保护文件，如果检测不到它，就会认为站点还没安装，此时任何人都可以安装/重装你的网站。<br/><br/>');

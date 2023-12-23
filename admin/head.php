@@ -56,7 +56,7 @@ if ($admin_cdnpublic == 1) {
                     <li class="<?php echo checkIfActive('settle,slist') ?>">
                         <a href="./slist.php"><i class="fa fa-cloud"></i> 结算管理</a>
                     </li>
-                    <li class="<?php echo checkIfActive('ulist,glist,group,record,uset,domain,ustat') ?>">
+                    <li class="<?php echo checkIfActive('ulist,glist,group,record,uset,domain,ustat,invitecode') ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> 商户管理<b
                                     class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -65,8 +65,8 @@ if ($admin_cdnpublic == 1) {
                             <li><a href="./group.php">用户组购买</a></li>
                             <li><a href="./record.php">资金明细</a></li>
                             <li><a href="./ustat.php">支付统计</a></li>
-                            <?php if ($conf['pay_domain_forbid'] == 1 || $conf['pay_domain_open'] == 1) { ?>
-                                <li><a href="./domain.php">授权域名</a></li><?php } ?>
+                            <?php if($conf['pay_domain_forbid']==1 || $conf['pay_domain_open']==1){?><li><a href="./domain.php">授权域名</a></li><?php }?>
+                            <?php if($conf['reg_open']==2){?><li><a href="./invitecode.php">邀请码管理</a></li><?php }?>
                         </ul>
                     </li>
                     <li class="<?php echo checkIfActive('pay_channel,pay_roll,pay_type,pay_plugin,pay_weixin') ?>">

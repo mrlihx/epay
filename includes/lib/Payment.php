@@ -28,7 +28,7 @@ class Payment {
 
 	// 页面支付返回信息
 	static public function echoDefault($result){
-		global $cdnpublic,$order,$conf,$sitename,$ordername;
+		global $cdnpublic,$order,$conf,$sitename,$ordername,$DB;
 		$type = $result['type'];
 		if(!$type) return false;
 		switch($type){
@@ -66,6 +66,16 @@ class Payment {
 					$code_url_wxkf = self::getWxkfPayUrl($code_url);
 					if($code_url_wxkf){
 						$code_url = $code_url_wxkf;
+
+                        // 客服H5新增二维码
+                        $wxkflog = $DB->getRow("SELECT * FROM pre_wxkflog WHERE trade_no=:trade_no", [':trade_no'=>$order['trade_no']]);
+                        if ($wxkflog){
+                            $jspay_url = $wxkflog['payurl'];;
+                            include PAYPAGE_ROOT.'wxpay_qrcode_h5.php';
+                            break;
+                        }
+                        // end
+
 						include PAYPAGE_ROOT.'wxpay_h5.php';
 						break;
 					}

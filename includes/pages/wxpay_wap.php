@@ -21,7 +21,7 @@ $durl = dwz($code_url);
                 <img src="/assets/icon/wechat.ico">微信支付手机版
         </div>
         <div class="list-group" style="text-align: center;">
-            <div class="list-group-item list-group-item-info">长按保存到相册使用微信扫码完成支付</div>
+            <div class="list-group-item list-group-item-info">请截屏后使用微信扫码完成支付</div>
             <div class="list-group-item">
                 <div class="qr-image" id="qrcode"></div>
             </div>

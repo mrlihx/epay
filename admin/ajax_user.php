@@ -167,11 +167,11 @@ switch ($act) {
         break;
 
     case 'getGroup': //用户组
-        $gid = intval($_GET['gid']);
-        $row = $DB->getRow("select * from pre_group where gid='$gid' limit 1");
-        if (!$row)
+        $gid=intval($_GET['gid']);
+        $row=$DB->getRow("select * from pre_group where gid='$gid' limit 1");
+        if(!$row)
             exit('{"code":-1,"msg":"当前用户组不存在！"}');
-        $result = ['code' => 0, 'msg' => 'succ', 'gid' => $gid, 'name' => $row['name'], 'info' => json_decode($row['info'], true), 'settle_open' => $row['settle_open'], 'settle_type' => $row['settle_type'], 'settle_rate' => $row['settle_rate'], 'settings' => $row['settings']];
+        $result = ['code'=>0,'msg'=>'succ','gid'=>$gid,'name'=>$row['name'],'info'=>json_decode($row['info'],true),'config'=>$row['config']?json_decode($row['config'],true):[],'settings'=>$row['settings']];
         exit(json_encode($result));
         break;
     case 'delGroup':
@@ -186,43 +186,37 @@ switch ($act) {
         } else exit('{"code":-1,"msg":"删除用户组失败[' . $DB->error() . ']"}');
         break;
     case 'saveGroup':
-        if ($_POST['action'] == 'add') {
-            $name = trim($_POST['name']);
-            $row = $DB->getRow("select * from pre_group where name='$name' limit 1");
-            if ($row)
+        if($_POST['action'] == 'add'){
+            $name=trim($_POST['name']);
+            $row=$DB->getRow("select * from pre_group where name='$name' limit 1");
+            if($row)
                 exit('{"code":-1,"msg":"用户组名称重复"}');
-            $info = $_POST['info'];
-            $info = json_encode($info);
-            $settle_open = intval($_POST['settle_open']);
-            $settle_type = intval($_POST['settle_type']);
-            $settle_rate = trim($_POST['settle_rate']);
-            $settings = trim($_POST['settings']);
-            if ($settings && !checkGroupSettings($settings)) exit('{"code":-1,"msg":"用户变量格式不正确"}');
-            $data = ['name' => $name, 'info' => $info, 'settle_open' => $settle_open, 'settle_type' => $settle_type, 'settle_rate' => $settle_rate, 'settings' => $settings];
-            if ($DB->insert('group', $data)) exit('{"code":0,"msg":"新增用户组成功！"}');
-            else exit('{"code":-1,"msg":"新增用户组失败[' . $DB->error() . ']"}');
-        } elseif ($_POST['action'] == 'changebuy') {
-            $gid = intval($_POST['gid']);
-            $status = intval($_POST['status']);
+            $info=json_encode($_POST['info']);
+            $config=json_encode($_POST['config']);
+            $settings=trim($_POST['settings']);
+            if($settings && !checkGroupSettings($settings))exit('{"code":-1,"msg":"用户变量格式不正确"}');
+            $data = ['name'=>$name, 'info'=>$info, 'config'=>$config, 'settings'=>$settings];
+            if($DB->insert('group', $data))exit('{"code":0,"msg":"新增用户组成功！"}');
+            else exit('{"code":-1,"msg":"新增用户组失败['.$DB->error().']"}');
+        }elseif($_POST['action'] == 'changebuy'){
+            $gid=intval($_POST['gid']);
+            $status=intval($_POST['status']);
             $sql = "UPDATE pre_group SET isbuy='{$status}' WHERE gid='$gid'";
-            if ($DB->exec($sql)) exit('{"code":0,"msg":"修改上架状态成功！"}');
-            else exit('{"code":-1,"msg":"修改上架状态失败[' . $DB->error() . ']"}');
-        } else {
-            $gid = intval($_POST['gid']);
-            $name = trim($_POST['name']);
-            $row = $DB->getRow("select * from pre_group where name='$name' and gid<>$gid limit 1");
-            if ($row)
+            if($DB->exec($sql))exit('{"code":0,"msg":"修改上架状态成功！"}');
+            else exit('{"code":-1,"msg":"修改上架状态失败['.$DB->error().']"}');
+        }else{
+            $gid=intval($_POST['gid']);
+            $name=trim($_POST['name']);
+            $row=$DB->getRow("select * from pre_group where name='$name' and gid<>$gid limit 1");
+            if($row)
                 exit('{"code":-1,"msg":"用户组名称重复"}');
-            $info = $_POST['info'];
-            $info = json_encode($info);
-            $settle_open = intval($_POST['settle_open']);
-            $settle_type = intval($_POST['settle_type']);
-            $settle_rate = trim($_POST['settle_rate']);
-            $settings = trim($_POST['settings']);
-            if ($settings && !checkGroupSettings($settings)) exit('{"code":-1,"msg":"用户变量格式不正确"}');
-            $data = ['name' => $name, 'info' => $info, 'settle_open' => $settle_open, 'settle_type' => $settle_type, 'settle_rate' => $settle_rate, 'settings' => $settings];
-            if ($DB->update('group', $data, ['gid' => $gid]) !== false) exit('{"code":0,"msg":"修改用户组成功！"}');
-            else exit('{"code":-1,"msg":"修改用户组失败[' . $DB->error() . ']"}');
+            $info=json_encode($_POST['info']);
+            $config=json_encode($_POST['config']);
+            $settings=trim($_POST['settings']);
+            if($settings && !checkGroupSettings($settings))exit('{"code":-1,"msg":"用户变量格式不正确"}');
+            $data = ['name'=>$name, 'info'=>$info, 'config'=>$config, 'settings'=>$settings];
+            if($DB->update('group', $data, ['gid'=>$gid])!==false)exit('{"code":0,"msg":"修改用户组成功！"}');
+            else exit('{"code":-1,"msg":"修改用户组失败['.$DB->error().']"}');
         }
         break;
     case 'saveGroupPrice':

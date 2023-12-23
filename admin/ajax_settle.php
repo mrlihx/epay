@@ -38,7 +38,7 @@ switch ($act) {
 
         foreach ($list as $row){
             if($row['type'] == "5" || $row['type'] == "6"){
-                $row['realmoney'] = round($row['realmoney'] / $conf['settle_usdt_rate'], 2) . "u";
+                $row['realmoney'] = round($row['realmoney'] / $conf['settle_usdt_rate'] - $conf['settle_usdt_miner_fee'], 2) . "u";
             }
             $newlist[] = $row;
         }
@@ -207,11 +207,19 @@ switch ($act) {
         } elseif ($type == 4) {
             $app = 'bank';
             $channel = \lib\Channel::get($conf['transfer_bank']);
+        } elseif ($type == 5) {
+            $app = 'usdt';
+            $channel = 'usdt';
         }
         if (!$channel) exit('{"code":-1,"msg":"当前支付通道信息不存在"}');
 
         $out_biz_no = date("Ymd") . '000' . $id;
-        $result = \lib\Transfer::submit($app, $channel, $out_biz_no, $row['account'], $row['username'], $row['realmoney']);
+        if ($type == 5){
+            // 这里写USDT转账
+
+        } else {
+            $result = \lib\Transfer::submit($app, $channel, $out_biz_no, $row['account'], $row['username'], $row['realmoney']);
+        }
 
         if ($result['code'] == 0) {
             $data['code'] = 0;

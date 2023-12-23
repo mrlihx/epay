@@ -32,7 +32,7 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">批量修改 <span class="caret"></span></button>
 	<ul class="dropdown-menu"><li><a href="javascript:operation(0)">待结算</a></li><li><a href="javascript:operation(1)">已完成</a></li><li><a href="javascript:operation(2)">正在结算</a></li><li><a href="javascript:operation(3)">结算失败</a></li><li><a href="javascript:operation(4)">删除记录</a></li></ul>
   </div>
-    <button type="submit" class="btn btn-danger" onclick="editRate()" >修改USDT汇率</button>
+    <button type="submit" class="btn btn-danger" onclick="editRate()" >USDT汇率(<?php echo $conf['settle_usdt_rate']?>)</button>
 </form>
 
 	  <table id="listTable">
