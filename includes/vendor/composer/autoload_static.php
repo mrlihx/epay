@@ -6,14 +6,30 @@ namespace Composer\Autoload;
 
 class ComposerStaticInita012aca486d6abc048243f4697c6ac40
 {
+    public static $files = array (
+        '382a2ac8aeff4e600f8a2b1256c841e2' => __DIR__ . '/..' . '/lpilp/guomi/src/overwrite.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'W' => 
         array (
             'WeChatPay\\' => 10,
         ),
+        'R' => 
+        array (
+            'Rtgm\\' => 5,
+        ),
         'Q' => 
         array (
             'QQPay\\' => 6,
+        ),
+        'M' => 
+        array (
+            'Mdanter\\Ecc\\' => 12,
+        ),
+        'F' => 
+        array (
+            'FG\\' => 3,
         ),
         'A' => 
         array (
@@ -26,9 +42,21 @@ class ComposerStaticInita012aca486d6abc048243f4697c6ac40
         array (
             0 => __DIR__ . '/..' . '/cccyun/wechatpay-sdk/src',
         ),
+        'Rtgm\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lpilp/guomi/src',
+        ),
         'QQPay\\' => 
         array (
             0 => __DIR__ . '/..' . '/cccyun/qqpay-sdk/src',
+        ),
+        'Mdanter\\Ecc\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mdanter/ecc/src',
+        ),
+        'FG\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/fgrosse/phpasn1/lib',
         ),
         'Alipay\\' => 
         array (
