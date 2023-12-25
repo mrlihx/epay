@@ -108,52 +108,28 @@ switch ($act) {
         exit(json_encode($result));
         break;
     case 'operation': //批量操作订单
-        $status = is_numeric($_POST['status']) ? intval($_POST['status']) : exit('{"code":-1,"msg":"请选择操作"}');
-        $checkbox = $_POST['checkbox'];
-        $i = 0;
-        foreach ($checkbox as $trade_no) {
-            if ($status == 4) $DB->exec("DELETE FROM pre_order WHERE trade_no='$trade_no'");
-            elseif ($status == 3) {
-                $row = $DB->getRow("select uid,getmoney,status from pre_order where trade_no='$trade_no' limit 1");
-                if ($row && $row['status'] == 3 && $row['getmoney'] > 0) {
-                    if (changeUserMoney($row['uid'], $row['getmoney'], true, '解冻订单', $trade_no))
-                        $DB->exec("update pre_order set status='1' where trade_no='$trade_no'");
-                }
-            } elseif ($status == 2) {
-                $row = $DB->getRow("select uid,getmoney,status from pre_order where trade_no='$trade_no' limit 1");
-                if ($row && $row['status'] == 1 && $row['getmoney'] > 0) {
-                    if (changeUserMoney($row['uid'], $row['getmoney'], false, '冻结订单', $trade_no))
-                        $DB->exec("update pre_order set status='3' where trade_no='$trade_no'");
-                }
-            } else $DB->exec("update pre_order set status='$status' where trade_no='$trade_no' limit 1");
+        $status=is_numeric($_POST['status'])?intval($_POST['status']):exit('{"code":-1,"msg":"请选择操作"}');
+        $checkbox=$_POST['checkbox'];
+        $i=0;
+        foreach($checkbox as $trade_no){
+            if($status==4)$DB->exec("DELETE FROM pre_order WHERE trade_no='$trade_no'");
+            elseif($status==3){
+                \lib\Order::unfreeze($trade_no);
+            }
+            elseif($status==2){
+                \lib\Order::freeze($trade_no);
+            }
+            else $DB->exec("update pre_order set status='$status' where trade_no='$trade_no' limit 1");
             $i++;
         }
-        exit('{"code":0,"msg":"成功改变' . $i . '条订单状态"}');
+        exit('{"code":0,"msg":"成功改变'.$i.'条订单状态"}');
         break;
     case 'getmoney': //退款查询
-        if (!$conf['admin_paypwd']) exit('{"code":-1,"msg":"你还未设置支付密码"}');
-        $trade_no = trim($_POST['trade_no']);
-        $api = isset($_POST['api']) ? intval($_POST['api']) : 0;
-        $row = $DB->getRow("select * from pre_order where trade_no='$trade_no' limit 1");
-        if (!$row)
-            exit('{"code":-1,"msg":"当前订单不存在！"}');
-        if ($row['status'] != 1)
-            exit('{"code":-1,"msg":"只支持退款已支付状态的订单"}');
-        if ($api == 1) {
-            if (!$row['api_trade_no'])
-                exit('{"code":-1,"msg":"接口订单号不存在"}');
-            $channel = \lib\Channel::get($row['channel']);
-            if (!$channel) {
-                exit('{"code":-1,"msg":"当前支付通道信息不存在"}');
-            }
-            if (\lib\Plugin::isrefund($channel['plugin']) == false) {
-                exit('{"code":-1,"msg":"当前支付通道不支持API退款"}');
-            }
-            $money = $row['money'];
-        } else {
-            $money = $row['money'];
-        }
-        exit('{"code":0,"money":"' . $money . '"}');
+        if(!$conf['admin_paypwd'])exit('{"code":-1,"msg":"你还未设置支付密码"}');
+        $trade_no=trim($_POST['trade_no']);
+        $api=isset($_POST['api'])?intval($_POST['api']):0;
+        $result = \lib\Order::refund_info($trade_no, $api);
+        exit(json_encode($result));
         break;
     case 'refund': //退款操作
         $trade_no = trim($_POST['trade_no']);
@@ -213,30 +189,14 @@ switch ($act) {
         }
         break;
     case 'freeze': //冻结订单
-        $trade_no = trim($_POST['trade_no']);
-        $row = $DB->getRow("select uid,getmoney,status from pre_order where trade_no='$trade_no' limit 1");
-        if (!$row)
-            exit('{"code":-1,"msg":"当前订单不存在！"}');
-        if ($row['status'] != 1)
-            exit('{"code":-1,"msg":"只支持冻结已支付状态的订单"}');
-        if ($row['getmoney'] > 0) {
-            changeUserMoney($row['uid'], $row['getmoney'], false, '订单冻结', $trade_no);
-            $DB->exec("update pre_order set status='3' where trade_no='$trade_no'");
-        }
-        exit('{"code":0,"msg":"已成功从UID:' . $row['uid'] . '冻结' . $row['getmoney'] . '元余额"}');
+        $trade_no=trim($_POST['trade_no']);
+        $result = \lib\Order::freeze($trade_no);
+        exit(json_encode($result));
         break;
     case 'unfreeze': //解冻订单
-        $trade_no = trim($_POST['trade_no']);
-        $row = $DB->getRow("select uid,getmoney,status from pre_order where trade_no='$trade_no' limit 1");
-        if (!$row)
-            exit('{"code":-1,"msg":"当前订单不存在！"}');
-        if ($row['status'] != 3)
-            exit('{"code":-1,"msg":"只支持解冻已冻结状态的订单"}');
-        if ($row['getmoney'] > 0) {
-            changeUserMoney($row['uid'], $row['getmoney'], true, '订单解冻', $trade_no);
-            $DB->exec("update pre_order set status='1' where trade_no='$trade_no'");
-        }
-        exit('{"code":0,"msg":"已成功为UID:' . $row['uid'] . '恢复' . $row['getmoney'] . '元余额"}');
+        $trade_no=trim($_POST['trade_no']);
+        $result = \lib\Order::unfreeze($trade_no);
+        exit(json_encode($result));
         break;
     case 'notify': //获取回调地址
         $trade_no = trim($_POST['trade_no']);

@@ -108,32 +108,24 @@ if ($admin_cdnpublic == 1) {
                             <li>
                             <li><a href="./set_wxkf.php">H5跳转微信客服支付</a></li>
                             <li>
-                            <li><a href="./set.php?mod=enzo">Enzo</a></li>
+                            <li><a href="./set.php?mod=enzo">GoEnzo</a></li>
                         </ul>
                     </li>
-                    <li class="<?php echo checkIfActive('clean,log,transfer,transfer_add,risk,alipayrisk,export,ps_receiver,ps_order,gettoken,blacklist') ?>">
+                    <li class="<?php echo checkIfActive('clean,log,transfer,transfer_add,risk,alipayrisk,export,ps_receiver,ps_order,gettoken,blacklist,complain,complain_info') ?>">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cube"></i> 其他功能<b
                                     class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="./export.php">导出订单</a>
-                            <li>
-                            <li><a href="./transfer_add.php">企业付款</a>
-                            <li>
-                            <li><a href="./transfer.php">付款记录</a>
-                            <li>
-                            <li><a href="./risk.php">风控记录</a>
-                            <li>
-                            <li><a href="./log.php">登录日志</a>
-                            <li>
-                            <li><a href="./clean.php">数据清理</a>
-                            <li>
-                            <li><a href="./ps_receiver.php">分账规则</a>
-                            <li>
-                            <li><a href="./ps_order.php">分账记录</a>
-                            <li>
-                            <li><a href="./gettoken.php">用户标识</a>
-                            <li>
+                            <li><a href="./export.php">导出订单</a><li>
+                            <li><a href="./transfer_add.php">企业付款</a><li>
+                            <li><a href="./transfer.php">付款记录</a><li>
+                            <li><a href="./risk.php">风控记录</a><li>
+                            <li><a href="./log.php">登录日志</a><li>
+                            <li><a href="./clean.php">数据清理</a><li>
+                            <li><a href="./ps_receiver.php">分账规则</a><li>
+                            <li><a href="./ps_order.php">分账记录</a><li>
+                            <li><a href="./gettoken.php">用户标识</a><li>
                             <li><a href="./blacklist.php">黑名单管理</a></li>
+                            <li><a href="./complain.php">支付交易投诉</a></li>
                         </ul>
                     </li>
                     <li><a href="./login.php?logout"><i class="fa fa-power-off"></i> 退出登录</a></li>

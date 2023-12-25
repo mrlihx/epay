@@ -207,6 +207,15 @@ switch($conf['user_style']){
                                 </a>
                             </li>
                         <?php }?>
+                        <?php if($conf['complain_open']==1){?>
+                            <li class="<?php echo checkIfActive('complain,complain_info')?>">
+                                <a href="complain.php">
+                                    <?php $complain_total = $DB->getColumn("SELECT count(*) from pre_complain WHERE uid=$uid AND status=0"); if($complain_total>0){echo '<b class="label bg-danger pull-right">'.$complain_total.'</b>';}?>
+                                    <i class="fa fa-commenting fa-fw"></i>
+                                    <span>交易投诉</span>
+                                </a>
+                            </li>
+                        <?php }?>
                         <li class="line dk hidden-folded"></li>
 
                         <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">

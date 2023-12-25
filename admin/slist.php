@@ -20,10 +20,10 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
     <input type="text" class="form-control" name="uid" style="width: 100px;" placeholder="商户号" value="">
   </div>
   <div class="form-group">
-	<select name="type" class="form-control"><option value="0">所有结算方式</option><option value="1">支付宝</option><option value="2">微信</option><option value="3">QQ钱包</option><option value="4">银行卡</option></select>
+	<select name="type" class="form-control"><option value="0">所有结算方式</option><option value="1">支付宝</option><option value="2">微信</option><option value="3">QQ钱包</option><option value="4">银行卡</option><option value="5">USDT-trc20</option><option value="6">币安USDT-trc20</option></select>
   </div>
   <div class="form-group">
-	<select name="dstatus" class="form-control"><option value="-1">全部状态</option><option value="0">状态待结算</option><option value="1">状态已完成</option><option value="2">状态正在结算</option><option value="3">状态结算失败</option></select>
+	<select name="dstatus" class="form-control"><option value="-1">全部状态</option><option value="0">待结算</option><option value="1">已完成</option><option value="2">正在结算</option><option value="3">结算失败</option></select>
   </div>
   <button type="submit" class="btn btn-primary">搜索</button>
   <a href="settle.php" class="btn btn-success">批量结算</a>

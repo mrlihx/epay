@@ -11,7 +11,7 @@ if($islogin==1){}else exit("<script language='javascript'>window.location.href='
     <div class="col-xs-12 col-sm-10 col-lg-8 center-block" style="float: none;">
 <?php
 $mod=isset($_GET['mod'])?$_GET['mod']:null;
-$mods=['site'=>'网站信息','pay'=>'支付相关','settle'=>'结算规则','transfer'=>'企业付款','oauth'=>'快捷登录','notice'=>'消息提醒','certificate'=>'实名认证','template'=>'首页模板','gonggao'=>'公告与排版','mail'=>'邮箱与短信','upimg'=>'LOGO设置','iptype'=>'IP地址','cron'=>'计划任务','proxy'=>'中转代理','account'=>'修改密码','enzo'=>'Enzo'];
+$mods=['site'=>'网站信息','pay'=>'支付相关','settle'=>'结算规则','transfer'=>'企业付款','oauth'=>'快捷登录','notice'=>'消息提醒','certificate'=>'实名认证','template'=>'首页模板','gonggao'=>'公告与排版','mail'=>'邮箱与短信','upimg'=>'LOGO设置','iptype'=>'IP地址','cron'=>'计划任务','proxy'=>'中转代理','account'=>'修改密码','enzo'=>'GoEnzo'];
 ?>
 <ul class="nav nav-pills">
 	<?php foreach($mods as $key=>$name){echo '<li class="'.($key==$mod?'active':null).'"><a href="set.php?mod='.$key.'">'.$name.'</a></li>';} ?>
@@ -489,6 +489,73 @@ $(document).ready(function(){
   </form>
 </div>
 </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading"><h3 class="panel-title">支付交易投诉相关配置</h3></div>
+        <div class="panel-body">
+            <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">投诉记录获取范围</label>
+                    <div class="col-sm-9"><select class="form-control" name="complain_range" default="<?php echo $conf['complain_range']?>"><option value="0">仅本站订单相关投诉</option><option value="1">全部投诉记录</option></select></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">用户中心开启交易投诉处理功能</label>
+                    <div class="col-sm-9"><select class="form-control" name="complain_open" default="<?php echo $conf['complain_open']?>"><option value="0">关闭</option><option value="1">开启</option></select><font color="green">开启后商户可自行处理支付宝/微信的交易投诉</font></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">自动冻结与解冻被投诉订单</label>
+                    <div class="col-sm-9"><select class="form-control" name="complain_freeze_order" default="<?php echo $conf['complain_freeze_order']?>"><option value="0">否</option><option value="1">是</option></select></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">投诉自动回复并处理</label>
+                    <div class="col-sm-9"><select class="form-control" name="complain_auto_reply" default="<?php echo $conf['complain_auto_reply']?>"><option value="0">否</option><option value="1">是</option></select></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">投诉自动回复内容</label>
+                    <div class="col-sm-9"><input type="text" name="complain_auto_reply_con" value="<?php echo $conf['complain_auto_reply_con']; ?>" class="form-control" placeholder=""/></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">投诉自动拉黑支付账号</label>
+                    <div class="col-sm-9"><select class="form-control" name="complain_auto_black" default="<?php echo $conf['complain_auto_black']?>"><option value="0">否</option><option value="1">是</option></select></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">投诉订单自动退款</label>
+                    <div class="col-sm-9"><select class="form-control" name="complain_auto_refund" default="<?php echo $conf['complain_auto_refund']?>"><option value="0">否</option><option value="1">是</option></select></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">金额低于多少自动退款</label>
+                    <div class="col-sm-9"><div class="input-group"><input type="text" name="complain_auto_refund_money" value="<?php echo $conf['complain_auto_refund_money']; ?>" class="form-control" placeholder="不填写则不限制金额"/><span class="input-group-addon">元</span></div></div>
+                </div><br/>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading"><h3 class="panel-title">微信支付合单支付配置</h3></div>
+        <div class="panel-body">
+            <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
+                <h4 style="text-align: center;">微信支付合单支付配置</h4>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">开启合单支付</label>
+                    <div class="col-sm-9"><select class="form-control" name="wxcombine_open" default="<?php echo $conf['wxcombine_open']?>"><option value="0">关闭</option><option value="1">开启</option></select><font color="green">只支持微信官方支付V3和服务商版插件，可将大额订单分为多个子单进行合单支付。最小分3个子单，最大50个子单。</font></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">合单支付最小金额</label>
+                    <div class="col-sm-9"><input type="text" name="wxcombine_minmoney" value="<?php echo $conf['wxcombine_minmoney']; ?>" class="form-control" placeholder="超过该金额进行合单支付，否则是普通支付"/></div>
+                </div><br/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">合单支付子单最大金额</label>
+                    <div class="col-sm-9"><input type="text" name="wxcombine_submoney" value="<?php echo $conf['wxcombine_submoney']; ?>" class="form-control" placeholder="子单超过该金额则增加子单数量"/></div>
+                </div><br/>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 <div class="panel panel-primary">
 <div class="panel-heading"><h3 class="panel-title">支付风控检测设置</h3></div>
 <div class="panel-body">
@@ -1079,7 +1146,7 @@ $("select[name='sms_api']").change(function(){
     }
     else
         showmsg('您还未设置Telegram API！',3);
-}elseif($mod=='tgbotset'){
+}elseif($mod=='enzoapiset'){
     $ret = get_curl($conf['telegram_api']."/api/SetBotConfig?token=" . $conf['telegram_key']);
     $data = json_decode($ret, true);
     if ($data['code'] == 200){
@@ -1088,18 +1155,19 @@ $("select[name='sms_api']").change(function(){
     showmsg('未生效',1);
 }elseif($mod=='enzo'){
 ?>
+
 <div class="panel panel-primary">
-    <div class="panel-heading"><h3 class="panel-title">短网址</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">GoEnzoAPI</h3></div>
     <div class="panel-body">
         <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
             <div class="form-group">
-                <label class="col-sm-2 control-label">短网址</label>
-                <div class="col-sm-10"><input type="text" name="shorturl_api" value="<?php echo $conf['shorturl_api']; ?>" class="form-control"/></div>
+                <label class="col-sm-2 control-label">EnzoAPI</label>
+                <div class="col-sm-10"><input type="text" name="telegram_api" value="<?php echo $conf['telegram_api']; ?>" class="form-control" placeholder="http://127.0.0.1:3300"/></div>
             </div><br/>
 
             <div class="form-group">
-                <label class="col-sm-2 control-label">Key</label>
-                <div class="col-sm-10"><input type="text" name="horturl_key" value="<?php echo $conf['horturl_key']; ?>" class="form-control"/></div>
+                <label class="col-sm-2 control-label">EnzoKey</label>
+                <div class="col-sm-10"><input type="text" name="telegram_key" value="<?php echo $conf['telegram_key']; ?>" class="form-control"/></div>
             </div><br/>
 
             <div class="form-group">
@@ -1110,9 +1178,9 @@ $("select[name='sms_api']").change(function(){
 
     </div>
     <div class="panel-footer">
-            <span class="glyphicon glyphicon-info-sign"></span>
-            扫码地址生成。 <a href="https://github.com/mrlihx/ShortUrl" target="_blank">下载源码</a><br/>
-        </div>
+        <span class="glyphicon glyphicon-info-sign"></span>
+        本页面所有功能都需要设置EnzoAPI。<br/>
+    </div>
 </div>
 
 <div class="panel panel-primary">
@@ -1123,15 +1191,6 @@ $("select[name='sms_api']").change(function(){
             <div class="form-group">
                 <label class="col-sm-2 control-label">机器人总开关</label>
                 <div class="col-sm-10"><select class="form-control" name="telegram_notice" default="<?php echo $conf['telegram_notice']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
-            </div><br/>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">EnzoBot API</label>
-                <div class="col-sm-10"><input type="text" name="telegram_api" value="<?php echo $conf['telegram_api']; ?>" class="form-control" placeholder="http://127.0.0.1:3300"/></div>
-            </div><br/>
-
-            <div class="form-group">
-                <label class="col-sm-2 control-label">EnzoBot Key</label>
-                <div class="col-sm-10"><input type="text" name="telegram_key" value="<?php echo $conf['telegram_key']; ?>" class="form-control"/></div>
             </div><br/>
 
             <div class="form-group">
@@ -1165,6 +1224,16 @@ $("select[name='sms_api']").change(function(){
                 <div class="col-sm-10"><select class="form-control" name="telegram_bindtype" default="<?php echo $conf['telegram_bindtype']?>"><option value="0">跳转链接绑定</option><option value="1">发送消息绑定</option><option value="2">只能在用户中心绑定</option></select></div>
             </div><br/>
 
+            <div class="form-group">
+                <label class="col-sm-2 control-label">开启Bot注册</label>
+                <div class="col-sm-10"><select class="form-control" name="telegram_reg" default="<?php echo $conf['telegram_reg']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+            </div><br/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">一键登录用户中心</label>
+                <div class="col-sm-10"><select class="form-control" name="telegram_obuser" default="<?php echo $conf['telegram_obuser']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+            </div><br/>
+
 <!--            <div class="form-group">-->
 <!--                <label class="col-sm-2 control-label">交易分析推送时间</label>-->
 <!--                <div class="col-sm-10"><input type="text" name="telegram_tapushtime" value="--><?php //echo $conf['telegram_tapushtime']; ?><!--" class="form-control" placeholder="单位:分"/></div>-->
@@ -1179,7 +1248,7 @@ $("select[name='sms_api']").change(function(){
 
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
-                    <a href="set.php?mod=tgbotset">>>>修改后点击此处让Bot生效<<<</a>
+                    <a href="set.php?mod=enzoapiset">>>>修改后点击此处让配置立即生效<<<</a>
                 </div><br/>
             </div>
         </form>
@@ -1187,6 +1256,74 @@ $("select[name='sms_api']").change(function(){
     <div class="panel-footer">
         <span class="glyphicon glyphicon-info-sign"></span>
         Tg API代理：可以直接使用https://tg-bot.0x23.cf 或 https://tgbot.hostport.top, 如果反应慢可以自己用海外服务器搭建Nginx反向代理到 https://api.telegram.org<br/>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading"><h3 class="panel-title">USDT转账</h3></div>
+    <div class="panel-body">
+        <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">TRON节点</label>
+                <div class="col-sm-10"><input type="text" name="enzo_tronNode" value="<?php echo $conf['enzo_tronNode']; ?>" class="form-control" placeholder="留空默认 grpc.trongrid.io:50051"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">钱包地址</label>
+                <div class="col-sm-10"><input type="text" name="enzo_tronAddress" value="<?php echo $conf['enzo_tronAddress']; ?>" class="form-control" placeholder="T开头的地址"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">*钱包私钥*</label>
+                <div class="col-sm-10"><input type="text" name="enzo_privateKey" value="" class="form-control" placeholder="保存后不可见"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">能量费限额</label>
+                <div class="col-sm-10"><input type="text" name="enzo_feeLimit" value="<?php echo $conf['enzo_feeLimit']; ?>" class="form-control" placeholder="转账消耗的TRX超过此值就不会转出. (只能是整数 默认50)"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
+                    <a href="set.php?mod=enzoapiset">>>>修改后点击此处让配置立即生效<<<</a>
+                </div><br/>
+            </div>
+        </form>
+    </div>
+    <div class="panel-footer">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        生效后 <a href="transfer_usdt.php" target="_blank">手动转账</a> 测试。<br/>
+        节点地址：<br/>
+        香港：43.198.147.230:50051 / 16.162.38.213:50051<br/>
+        韩国：13.124.62.58:50051<br/>
+        新加坡：52.74.28.39:50051<br/>
+        美国：18.206.50.220:50051 / 52.15.93.92:50051 / 34.220.77.106:50051<br/>
+    </div>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading"><h3 class="panel-title">短网址</h3></div>
+    <div class="panel-body">
+        <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">短网址</label>
+                <div class="col-sm-10"><input type="text" name="shorturl_api" value="<?php echo $conf['shorturl_api']; ?>" class="form-control"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Key</label>
+                <div class="col-sm-10"><input type="text" name="horturl_key" value="<?php echo $conf['horturl_key']; ?>" class="form-control"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
+                </div><br/>
+            </div>
+        </form>
+
+    </div>
+    <div class="panel-footer">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        扫码地址生成。 <a href="https://github.com/mrlihx/ShortUrl" target="_blank">下载php源码</a><br/>
     </div>
 </div>
 <?php
@@ -1395,7 +1532,7 @@ elseif($mod=='proxy'){
 <span class="glyphicon glyphicon-info-sign"></span>
 本功能开启后，在支付成功异步回调的时候，使用中转代理访问商户网站，可解决一些只能国内访问的网站回调问题，也可以防止本站服务器IP泄露。<br/>
 自定义代理可以使用Windows服务器+CCProxy软件搭建<br/><br/>
-2023.11.03新增URL代理; 开启"仅重新通知时使用"后第一次异步通知失败后会使用URL代理重新通知一次, 全部开启则所有异步回调都使用URL代理。
+2023.11.03新增URL代理; <br>仅重新通知时使用: 支付成功异步通知失败后会使用URL代理重新通知<br>全部开启: 所有异步通知都使用此URL代理。
 </div>
 </div>
 <?php

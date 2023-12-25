@@ -23,6 +23,13 @@ unset($rs);
     overflow-y: auto;
 }
 }
+
+/*#listTable {*/
+/*    !*设置列表框最小高度*!*/
+/*    min-height: 500px;*/
+/*    overflow-y: auto;*/
+/*}*/
+
 </style>
 <link href="../assets/css/datepicker.css" rel="stylesheet">
   <div class="container-fluid" style="padding-top:70px;">

@@ -216,7 +216,8 @@ switch ($act) {
         $out_biz_no = date("Ymd") . '000' . $id;
         if ($type == 5){
             // 这里写USDT转账
-
+            $realmoney = round($row['realmoney'] / $conf['settle_usdt_rate'] - $conf['settle_usdt_miner_fee'], 2);
+            $result = SendUSDT($row['account'], $realmoney);
         } else {
             $result = \lib\Transfer::submit($app, $channel, $out_biz_no, $row['account'], $row['username'], $row['realmoney']);
         }

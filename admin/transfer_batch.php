@@ -18,7 +18,7 @@ if($type == 1){
 	$method = '支付宝单笔转账到银行卡接口';
 }elseif($type == 5){
     $typename = 'USDT';
-    $method = 'TRON波场发送代币';
+    $method = 'TRON波场发送USDT';
 }
 $title=$typename.'批量转账';
 include './head.php';
@@ -163,6 +163,17 @@ var xiha={
 		</div>
 	</div>
 </div>
+
+<?php
+
+if($type == 5){
+?>
+    <div class="panel" style="text-align: center;">
+    <font color="green">USDT转账 余额不足/能量不足 也会显示成功，只有发生错误时会失败，请提前转入足够的USDT后操作。</font>
+    </div>
+<?php
+}
+?>
 
 <div class="panel panel-primary">
 	<table class="table table-bordered table-condensed">

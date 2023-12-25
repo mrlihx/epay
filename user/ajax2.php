@@ -828,24 +828,9 @@ switch ($act) {
         break;
 
     case 'refund_query': //退款查询
-        if (!$conf['user_refund']) exit('{"code":-1,"msg":"未开启商户后台自助退款"}');
-        $trade_no = daddslashes(trim($_POST['trade_no']));
-        $row = $DB->getRow("select * from pre_order where trade_no='$trade_no' and uid='$uid' limit 1");
-        if (!$row)
-            exit('{"code":-1,"msg":"当前订单不存在！"}');
-        if ($row['status'] != 1)
-            exit('{"code":-1,"msg":"只支持退款已支付状态的订单"}');
-        if (!$row['api_trade_no'])
-            exit('{"code":-1,"msg":"接口订单号不存在"}');
-        $channel = \lib\Channel::get($row['channel']);
-        if (!$channel) {
-            exit('{"code":-1,"msg":"当前支付通道信息不存在"}');
-        }
-        if (\lib\Plugin::isrefund($channel['plugin']) == false) {
-            exit('{"code":-1,"msg":"当前支付通道不支持自助退款"}');
-        }
-        $money = $row['money'];
-        exit(json_encode(['code' => 0, 'money' => $money]));
+        $trade_no=daddslashes(trim($_POST['trade_no']));
+        $result = \lib\Order::refund_info($trade_no, 1, $uid);
+        exit(json_encode($result));
         break;
     case 'refund_submit': //确认退款
         if (!$conf['user_refund']) exit('{"code":-1,"msg":"未开启商户后台自助退款"}');
@@ -902,9 +887,17 @@ switch ($act) {
         $offset = intval($_POST['offset']);
         $limit = intval($_POST['limit']);
         $total = $DB->getColumn("SELECT count(*) from pre_user WHERE{$sql}");
-        $list = $DB->getAll("SELECT uid,upid,addtime,lasttime,status FROM pre_user WHERE{$sql} order by uid desc limit $offset,$limit");
-
-        exit(json_encode(['total'=>$total, 'rows'=>$list]));
+        $list = $DB->getAll("SELECT uid,upid,addtime,lasttime,status,money FROM pre_user WHERE{$sql} order by uid desc limit $offset,$limit");
+        foreach ($list as $row){
+            if ($row['money'] > 10){
+                $row['state'] = '<span style="color: green;">Active</span>';
+            }else{
+                $row['state'] = '<span style="color: red;">Inactive</span>';
+            }
+            unset($newlist['money']);
+            $newlist[] = $row;
+        }
+        exit(json_encode(['total'=>$total, 'rows'=>$newlist]));
         break;
 
     default:

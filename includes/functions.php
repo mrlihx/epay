@@ -1106,6 +1106,24 @@ function telegramBot_SendMessage($tid, $msg){
     return false;
 }
 
+
+function SendUSDT($address, $amount){
+    global $conf;
+    $param = json_encode(['address' => $address, 'amount'=>$amount]);
+    $ret = get_curl($conf['telegram_api']."/api/SendUSDT?token=" . $conf['telegram_key'], $param);
+    $data = json_decode($ret, true);
+//    var_dump($data);
+    if ($data['code'] == 200){
+        if ($data['data']['result'] == "true"){
+            return ['orderid' => $data['data']['hash'], 'paydate' => date("Y-m-d H:i:s")];
+        } else {
+            return ['errcode' => "TRANSFER_FAIL", 'msg' => $data['message']];
+        }
+    }else{
+        return ['errcode' => "TRANSFER_FAIL", 'msg' => $data['message']];
+    }
+}
+
 function rc4($str, $key, $Encrypt=false) {
     if (!$Encrypt) {
         $str = str_replace("-", "+", $str);

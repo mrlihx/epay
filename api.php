@@ -121,40 +121,32 @@ elseif($act=='refund')
 
     if(!empty($_POST['trade_no'])){
         $trade_no=daddslashes($_POST['trade_no']);
-        $row=$DB->getRow("select uid,money,getmoney,status,channel from pre_order where trade_no='$trade_no' and uid='$pid' limit 1");
     }elseif(!empty($_POST['out_trade_no'])){
         $out_trade_no=daddslashes($_POST['out_trade_no']);
-        $row=$DB->getRow("select uid,money,getmoney,status,channel from pre_order where out_trade_no='$out_trade_no' and uid='$pid' limit 1");
-        $trade_no=daddslashes($row['trade_no']);
+        $trade_no = $DB->findColumn('order', 'trade_no', ['out_trade_no'=>$out_trade_no, 'uid'=>$pid]);
+        if(!$trade_no) exit(json_encode(['code'=>-1, 'msg'=>'当前订单不存在！']));
     }else{
         exit(json_encode(['code'=>-4, 'msg'=>'订单号不能为空']));
     }
-    if(!$row)
-        exit(json_encode(['code'=>-1, 'msg'=>'当前订单不存在！']));
-    if($row['status']!=1)
-        exit(json_encode(['code'=>-1, 'msg'=>'只支持退款已支付状态的订单']));
-    if($money>$row['money'])exit(json_encode(['code'=>-1, 'msg'=>'退款金额不能大于订单金额']));
-    if($money==$row['money'] || $money>=$row['getmoney']){
-        $refundmoney = $money;
-        $reducemoney = $row['getmoney'];
-    }else{
-        $refundmoney = $money;
-        $reducemoney = $money;
+
+    $result = \lib\Order::refund($trade_no, $money, 1, $pid);
+    if($result['code'] == 0){
+        $result['msg'] = '退款成功！退款金额￥'.$result['money'];
     }
-    if($reducemoney > $userrow['money']){
-        exit(json_encode(['code'=>-1, 'msg'=>'商户余额不足，请先充值']));
+    exit(json_encode($result));
+}
+elseif($act=='refundapi')
+{
+    $money = trim($_POST['money']);
+    $trade_no=daddslashes($_POST['trade_no']);
+    if(!is_numeric($money) || !preg_match('/^[0-9.]+$/', $money))exit(json_encode(['code'=>-1, 'msg'=>'金额输入错误']));
+    if(!isset($_POST['key']) || $_POST['key']!==md5($trade_no.SYS_KEY.$trade_no))exit(json_encode(['code'=>-1, 'msg'=>'密钥错误']));
+
+    $result = \lib\Order::refund($trade_no, $money, 1);
+    if($result['code'] == 0){
+        $result['msg'] = '退款成功！退款金额￥'.$result['money'];
     }
-    $message = null;
-    if(\lib\Plugin::refund($trade_no, $refundmoney, $message)){
-        $mode = $DB->getColumn("select mode from pre_channel where id='{$row['channel']}'");
-        if($reducemoney>0 && $mode=='0'){
-            changeUserMoney($row['uid'], $reducemoney, false, '订单退款', $trade_no);
-        }
-        $DB->exec("update pre_order set status='2' where trade_no='$trade_no'");
-        exit(json_encode(['code'=>1, 'msg'=>'退款成功', 'money'=>$refundmoney]));
-    }else{
-        exit(json_encode(['code'=>-1, 'msg'=>'退款失败：'.$message]));
-    }
+    exit(json_encode($result));
 }
 else
 {

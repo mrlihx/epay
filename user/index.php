@@ -1,5 +1,13 @@
 <?php
 include("../includes/common.php");
+if(isset($_GET['invite'])){
+    $invite_code = trim($_GET['invite']);
+    $uid = get_invite_uid($invite_code);
+    if($uid && is_numeric($uid)){
+        $_SESSION['invite_uid'] = intval($uid);
+    }
+}
+
 if($islogin2==1){}else exit("<script language='javascript'>window.location.href='./login.php';</script>");
 
 if(empty($userrow['account']) || empty($userrow['username'])){

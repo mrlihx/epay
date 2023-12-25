@@ -342,8 +342,14 @@ switch ($act) {
         if ($type == 'pay') $sql = "UPDATE pre_user SET pay='$status' WHERE uid='$uid'";
         elseif ($type == 'settle') $sql = "UPDATE pre_user SET settle='$status' WHERE uid='$uid'";
         elseif ($type == 'group') $sql = "UPDATE pre_user SET gid='$status' WHERE uid='$uid'";
-        elseif ($type == 'aff') $sql = "UPDATE pre_user SET aff='$status' WHERE uid='$uid'";
         else $sql = "UPDATE pre_user SET status='$status' WHERE uid='$uid'";
+        if ($type == 'pay') {
+            $rows = $DB->getRow("select * from pre_user where uid='$uid' limit 1");
+            if ($rows['pay'] == 2 && $status == 1){
+                if(!$conf['apiurl'])$conf['apiurl'] = $siteurl;
+                telegramBot_SendMessage($rows['telegram'], "支付权限已审核通过。\n\n接口地址：`". $conf['apiurl'] ."`\n商户ID：`" .$rows['uid'] . "`\n商户Key：`" . $rows['key']."`");
+            }
+        }
         if ($DB->exec($sql) !== false) exit('{"code":0,"msg":"修改用户成功！"}');
         else exit('{"code":-1,"msg":"修改用户失败[' . $DB->error() . ']"}');
         break;

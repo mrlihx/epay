@@ -56,6 +56,17 @@ switch ($act) {
         $result = \lib\Transfer::balance($type, $channel, $user_id);
         exit(json_encode($result));
         break;
+    case 'usdt_balance_query':
+        $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
+        global $conf;
+        $ret = get_curl($conf['telegram_api']."/api/GetTronBalance?token=" . $conf['telegram_key']);
+        $data = json_decode($ret, true);
+        if ($data['code'] == 200){
+            exit(json_encode(['code' => 0,'usdt' => $data['data']['usdt'], 'trx' => $data['data']['trx']]));
+        }else{
+            exit(json_encode(['msg' => "数据获取失败。"]));
+        }
+        break;
     case 'setTransferStatus':
         $biz_no = $_POST['biz_no'];
         $status = intval($_POST['status']);

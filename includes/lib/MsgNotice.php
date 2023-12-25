@@ -49,12 +49,12 @@ class MsgNotice
                 $typeStr = "银行卡";
             }elseif ($type == 5){
                 $typeStr = "USDT-trc20";
-                $realmoney = round($realmoney / $conf['settle_usdt_rate'], 2) . "u";
+                $realmoney = round($realmoney / $conf['settle_usdt_rate'] - $conf['settle_usdt_miner_fee'], 2) . "u";
             }elseif ($type == 6){
                 $typeStr = "币安USDT-trc20";
-                $realmoney = round($realmoney / $conf['settle_usdt_rate'], 2) . "u";
+                $realmoney = round($realmoney / $conf['settle_usdt_rate'] - $conf['settle_usdt_miner_fee'], 2) . "u";
             }
-            $content = "📢".$conf['sitename'].date('m-d', strtotime('-1 day', strtotime($param['addtime'])))."款项结算通知\n收款方式：" . $typeStr ."\n收款账号：".$param['account']."\n结算金额：".$param['money']."元\n实际到账：". $realmoney."\n\n✅已打款✅";
+            $content = "📢".$conf['sitename'].date('m-d', strtotime('-1 day', strtotime($param['addtime'])))."款项结算通知\n收款方式：" . $typeStr ."\n收款账号：".$param['account']."\n结算金额：".$param['money']."元\n实际到账：（".$param['realmoney']."÷".$conf['settle_usdt_rate']."-".$conf['settle_usdt_miner_fee']."）= ".$realmoney."\n\n✅已打款✅\n📢实际到账金额有误请狠狠的喷管理。";
         }else if($scene == 'order'){
             $content = "📢📢📢新订单通知。\n系统订单号：`".$param['trade_no']."`\n商户订单号：`".$param['out_trade_no']."`\n商品名称：".$param['name']."\n订单金额：￥".$param['realmoney']."\n支付方式：".$param['type']."\n订单时间：".$param['addtime']."\n支付时间：".$param['time'];
             if($param['notify'] > 0) $content .= "\n❌通知失败:".$param['notify']."次";

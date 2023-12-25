@@ -15,7 +15,7 @@ if($app=='alipay'){
 }elseif($app=='qqpay'){
 	$default_channel = $conf['transfer_qqpay'];
 }elseif($app=='bank'){
-	$default_channel = $conf['transfer_bank'];
+    $default_channel = $conf['transfer_bank'];
 }else{
 	showmsg('参数错误',4);
 }
@@ -63,7 +63,7 @@ $channel_select = $DB->getAll("SELECT id,name,plugin FROM pre_channel WHERE plug
         <div class="panel-heading"><h3 class="panel-title">企业付款</h3></div>
         <div class="panel-body">
 		<ul class="nav nav-tabs">
-			<li class="<?php echo $app=='alipay'?'active':null;?>"><a href="?app=alipay">支付宝</a></li><li class="<?php echo $app=='wxpay'?'active':null;?>"><a href="?app=wxpay">微信</a></li><li class="<?php echo $app=='qqpay'?'active':null;?>"><a href="?app=qqpay">QQ钱包</a></li><li class="<?php echo $app=='bank'?'active':null;?>"><a href="?app=bank">银行卡</a></li>
+			<li class="<?php echo $app=='alipay'?'active':null;?>"><a href="?app=alipay">支付宝</a></li><li class="<?php echo $app=='wxpay'?'active':null;?>"><a href="?app=wxpay">微信</a></li><li class="<?php echo $app=='qqpay'?'active':null;?>"><a href="?app=qqpay">QQ钱包</a></li><li class="<?php echo $app=='bank'?'active':null;?>"><a href="?app=bank">银行卡</a></li><li class="<?php echo $app=='bank'?'active':null;?>"><a href="transfer_usdt.php">USDT</a></li>
 		</ul>
 		<div class="tab-pane active" id="alipay">
           <form action="?app=<?php echo $app?>" method="POST" role="form">

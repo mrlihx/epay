@@ -31,13 +31,13 @@ if($_GET['do']=='settle'){
             }
             $i++;
             $settle_rate = $conf['settle_rate'];
-            $group = $DB->find('group', 'settle_open,settle_rate', ['gid'=>$row['gid']]);
-            if($group && $group['settle_open'] == 2) continue;
-            if($group && $group['settle_rate']!=='' && $group['settle_rate']!==null) $settle_rate = $group['settle_rate'];
+            $group = getGroupConfig($row['gid']);
+            if(isset($group['settle_open']) && $group['settle_open'] == 2) continue;
+            if(isset($group['settle_rate']) && $group['settle_rate']!=='' && $group['settle_rate']!==null) $settle_rate = $group['settle_rate'];
             if($settle_rate>0){
                 $fee=round($row['money']*$settle_rate/100,2);
-                if($fee<$conf['settle_fee_min'])$fee=$conf['settle_fee_min'];
-                if($fee>$conf['settle_fee_max'])$fee=$conf['settle_fee_max'];
+                if(!empty($conf['settle_fee_min']) && $fee<$conf['settle_fee_min'])$fee=$conf['settle_fee_min'];
+                if(!empty($conf['settle_fee_max']) && $fee>$conf['settle_fee_max'])$fee=$conf['settle_fee_max'];
                 $realmoney=$row['money']-$fee;
             }else{
                 $realmoney=$row['money'];
@@ -256,6 +256,17 @@ elseif($_GET['do']=='check'){
         }
         echo '商户订单成功率检查任务已完成<br/>';
     }
+}
+elseif($_GET['do']=='complain'){
+    $channelid = intval($_GET['channel']);
+    $num = 20;
+    $channel=\lib\Channel::get($channelid);
+    if(!$channel)exit('当前支付通道不存在');
+    $channel['source'] = 1;
+    $model = \lib\Complain\CommUtil::getModel($channel);
+    if(!$model)exit('不支持该支付插件');
+    $result = $model->refreshNewList($num);
+    echo $result['msg'];
 }
 elseif($_GET['do']=='clean'){
     $days = $_GET['days'];

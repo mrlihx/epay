@@ -6,6 +6,8 @@ include './head.php';
 ?>
 <?php
 if(!$conf['invite_open'])exit('未开启邀请返现功能');
+$groupconfig = getGroupConfig($uid);
+$conf = array_merge($conf, $groupconfig);
 
 $invite_url = $siteurl.'?invite='.urlencode(get_invite_code($uid));
 if($conf['homepage']>0){
@@ -133,12 +135,16 @@ $(document).ready(function(){
 		columns: [
 			{
 				field: 'uid',
-				title: '商户ID'
+				title: '商户ID',
 			},
 			{
 				field: 'addtime',
 				title: '注册时间'
 			},
+            {
+                field: 'state',
+                title: '状态'
+            },
 		],
 	})
 });

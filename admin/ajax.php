@@ -94,6 +94,7 @@ switch ($act) {
             if (!empty($_POST['login_apiurl']) && (substr($_POST['login_apiurl'], 0, 4) != 'http' || substr($_POST['login_apiurl'], -1) != '/')) exit('{"code":-1,"msg":"聚合登录API接口地址格式错误"}');
         }
         foreach ($_POST as $k => $v) {
+            if ($k == "enzo_privateKey" && $v == "") continue;
             saveSetting($k, $v);
         }
         $ad = $CACHE->clear();
