@@ -62,7 +62,7 @@ if (!empty($paytype) && isset($_SESSION['paypage_typeid']) && isset($_SESSION['p
             $getmoney = round($money * $_SESSION['paypage_rate'] / 100, 2);
         }
 
-        if (!empty($conf['pay_payaddstart']) && $conf['pay_payaddstart'] != 0 && !empty($conf['pay_payaddmin']) && $conf['pay_payaddmin'] != 0 && !empty($conf['pay_payaddmax']) && $conf['pay_payaddmax'] != 0 && $realmoney >= $conf['pay_payaddstart']) $realmoney = $realmoney + randomFloat(round($conf['pay_payaddmin'], 2), round($conf['pay_payaddmax'], 2));
+        if(!empty($conf['pay_payaddstart'])&&$conf['pay_payaddstart']!=0&&!empty($conf['pay_payaddmin'])&&$conf['pay_payaddmin']!=0&&!empty($conf['pay_payaddmax'])&&$conf['pay_payaddmax']!=0&&$realmoney>=$conf['pay_payaddstart'])$realmoney = round($realmoney + randomFloat(round($conf['pay_payaddmin'],2),round($conf['pay_payaddmax'],2)), 2);
 
         $DB->exec("UPDATE pre_order SET type='$typeid',channel='$channelid',realmoney='$realmoney',getmoney='$getmoney' WHERE trade_no='$trade_no'");
 
