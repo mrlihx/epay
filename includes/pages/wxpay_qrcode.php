@@ -2,80 +2,95 @@
 // 微信扫码支付页面
 
 if (!defined('IN_PLUGIN')) exit();
-$durl = dwz($code_url);
+$durl = $code_url;
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="ch-cn">
 <head>
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="Content-Language" content="zh-cn">
-    <meta name="renderer" content="webkit">
-    <title>微信扫码支付</title>
-    <link href="/assets/css/wechat_pay.css?v=2" rel="stylesheet" media="screen">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>微信收银台-<?php echo $sitename ?></title>
+    <link rel="stylesheet" href="/assets/paypage/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="/assets/paypage/css/bootstrap-grid.css">
+    <link rel="stylesheet" href="/assets/paypage/css/pc_qrcode.css">
+    <link rel="stylesheet" href="/assets/paypage/css/layer.css" id="layuicss-layer">
 </head>
 <body>
-<div class="body">
-    <h1 class="mod-title">
-        <span class="ico-wechat"></span><span class="text">微信扫码支付</span>
-    </h1>
-    <div class="mod-ct">
-        <div class="order">
-        </div>
-        <div class="mobile-tip" style="display: none;">提示：二维码会风控，请复制下方链接支付</div>
-        <div class="amount">￥<?php echo $order['realmoney'] ?></div>
-        <div class="qr-image" id="qrcode">
-        </div>
-        <div class="mobile-btn" style="display: none;">
-            <div class="mobile-tip">
-                操作流程：复制链接→打开微信搜索自己微信名→打开聊天对话框→粘贴链接→发送→点击发送出来的蓝色链接→进入付款页面→完成付款
-            </div>
-            <a class="btn-copy-link" id="copy-btn" data-clipboard-text="<?php echo $durl ?>">点我复制链接</a>
-        </div>
-        <div class="detail" id="orderDetail">
-            <dl class="detail-ct" style="display: none;">
-                <dt>商家</dt>
-                <dd id="storeName"><?php echo $sitename ?></dd>
-                <dt>购买物品</dt>
-                <dd id="productName"><?php echo $order['name'] ?></dd>
-                <dt>商户订单号</dt>
-                <dd id="billId"><?php echo $order['trade_no'] ?></dd>
-                <dt>创建时间</dt>
-                <dd id="createTime"><?php echo $order['addtime'] ?></dd>
-            </dl>
-            <a href="javascript:void(0)" class="arrow"><i class="ico-arrow"></i></a>
-        </div>
-        <div class="tip">
-            <span class="dec dec-left"></span>
-            <span class="dec dec-right"></span>
-            <div class="ico-scan"></div>
-            <div class="tip-text">
-                <p>请使用微信扫一扫</p>
-                <p>扫描二维码完成支付</p>
+
+<header class="header">
+    <div class="header__wrap">
+        <div class="container">
+            <div class="row ">
+                <div class="col-12">
+                    <div class="header__content d-flex justify-content-between">
+                        <div class="header__logo d-flex align-items-center">
+                            <svg t="1610806307396" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" p-id="6171" width="26" height="26">
+                                <path d="M1024 199.18v410.38c0 110-89.54 199.18-200 199.18H200c-110.46 0-200-89.18-200-199.18V199.18C0 89.17 89.54 0 200 0h624c110.46 0 200 89.17 200 199.18z m-553.95 317v46.72q0.9 19.32 12 28.75t30.9 9.43q40.14 0 41.95-38.18v-47.58l86.6 0.45q11.73-0.9 18.49-8.76t7.67-19.54a33.48 33.48 0 0 0-7.67-19.32q-6.77-8.09-18.49-9h-86.6v-27.4l86.15-0.45q11.73-0.9 18.72-9a33.26 33.26 0 0 0 7.89-19.76q-0.9-11.23-7.67-18.42t-18.49-8.09h-66.3l69.91-113.2q9-11.68 9-24.71a50.37 50.37 0 0 0-4.28-15.27 24.48 24.48 0 0 0-7.22-9 27.29 27.29 0 0 0-9.92-4.49 74.75 74.75 0 0 0-12.4-1.8 43.43 43.43 0 0 0-19.4 7.19 54.51 54.51 0 0 0-14 13.48l-75.34 125.83L443 229.18A65.48 65.48 0 0 0 429 215a36.39 36.39 0 0 0-19.4-7.41q-18.49 2.25-25.26 10.11t-9 20.44a36.94 36.94 0 0 0 3.61 18.19 67.53 67.53 0 0 0 8.57 13.7l60.44 106H383q-12.18 0.9-18.72 8.09t-7.89 18.42q1.35 11.68 7.89 19.32t18.72 8.56l87.05 0.45v28.3H383q-12.18 0.9-18.72 8.09t-7.89 18.42a43.81 43.81 0 0 0 7.89 20.44q6.54 9.21 18.72 10.11h87.05z"
+                                      fill="#4375ff" p-id="6172"></path>
+                                <path d="M264.96 903.6m60.2 0l373.67 0q60.2 0 60.2 60.2l0 0q0 60.2-60.2 60.2l-373.67 0q-60.2 0-60.2-60.2l0 0q0-60.2 60.2-60.2Z"
+                                      fill="#4375ff" p-id="6173"></path>
+                            </svg>
+                            <span class="ml-2">收银台</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="tip-text">
+    </div>
+</header>
+<section class="section details__section section--first  section--last">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="time">
+                    <span>请使用微信扫码完成支付 </span>
+                </div>
+                <div class="order">
+                    <span>订单号：<?php echo $order['trade_no'] ?></span>
+                    <span data-clipboard-text="<?php echo $order['trade_no'] ?>" class="copy"
+                          id="clipboard_order">复制</span>
+                </div>
+                <div class="goods_name">
+                    <span><?php echo $order['name'] ?></span>
+                </div>
+                <div class="pay_type mt-4">
+                    <img src="/assets/paypage/img/wx.png">
+                    <span>微信扫码支付</span>
+                </div>
+                <div class="mod-ct">
+                    <div class="order"></div>
+                    <div class="qr-image" id="qrcode"></div>
+                </div>
+                <div class="price mt-4">
+                    <span><?php echo $order['realmoney'] ?></span>
+                    <span>元</span>
+                </div>
+                <p class="mt-2" style="color:#3259ff;font-size: 13px">防止支付失败 会随机增减几分</p>
+                <div class="shanxinzha">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACiElEQVR4nO2a0XHDIAyGGcEjZISMkBE6QkfICNmgI3QEj+ARMoIegJ9Hj9A+WNy1vcbItrCcHN8drwYJ6UcWONdoNBqNRqNRESLqvPeXGOMNwAeAAcAdwMjjDqBPKX3GGG/e+4v1mjeTjU4pfbKRXytGH0J4t7ZlEUTUAbgCoJVGPxpXa9uKeO8vHM6ahv8cdMiI4F3vKxr+d9yJqLO22znnXAjhXCHcJWMMIZxNjeeQXytwWuPNxPgQwvsBjLdxAof9UuNHAEM+50MIZyLqiKjj771hOj2GNU7YLR1Y8JYo/QjgulS02BmLHLyLMEKu9mOM8bZ1UVw9Sp0waNn5Lxym0l1Xy8slKVetTlgQ+veU0kl7/pTSSTj/qD23c06ck1XPZt6EYiTEGG8WE6uG/SO49ihuhGoUCnP/Q23CAhJhVNUCgfLvcwQxHJFUWFO/22TqOSeAK9H6YigJ/xqqX4I3pn4aCNS/bvExv7bZ1FSJTG5pHSr8M4I02K4DAgG0+R11oiNxe3SiUH1ZNiUEOrBdCEsngIUAZvZywGwFaN2bK2yQigMOmwK8vjmNUtGAYc4B1rc4/Jf47+6rrA3TVdZcnplfWHC/IEfCCGBQi0yBA3Rq7qMCQSlsLYRVkfQCDnldpUmpHFY5bo6MoOY2/SeojrQXZ30kVgXCpqhlaVydQtmZB72sEyRaoFqFHZHSv8GfsVuneDeEHdlf0fBydQLX3lIH/CqbAVz59djJ2o5NCG9oJIMwvRE8Wdu0GEUn5JLa9s3PGpQfST3nn+WKVyMPBdPalk1g+wvR53ZABsvf9+RhdstUBXaE+E3Ry1aPzk2dJb7X7zE1WnOq6PbwGo1Go9FoNIR8A0fjmlx859ePAAAAAElFTkSuQmCC">
+                    <span>正在检测订单状态 <p>0</p> 次</span>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="foot">
-        <div class="inner">
-            <p>手机用户可保存上方二维码到手机中</p>
-            <p>在微信扫一扫中选择“相册”即可</p>
-        </div>
-    </div>
-</div>
+</section>
+
 <script src="<?php echo $cdnpublic ?>jquery/1.12.4/jquery.min.js"></script>
 <script src="<?php echo $cdnpublic ?>layer/3.1.1/layer.min.js"></script>
 <script src="<?php echo $cdnpublic ?>jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 <script src="<?php echo $cdnpublic ?>clipboard.js/1.7.1/clipboard.min.js"></script>
+
 <script>
-    var clipboard = new Clipboard('#copy-btn');
+    var clipboard = new Clipboard('#clipboard_order');
     clipboard.on('success', function (e) {
         layer.msg('复制成功，请到微信里面粘贴');
     });
     clipboard.on('error', function (e) {
         layer.msg('复制失败');
     });
+
     var code_url = '<?php echo $code_url?>';
     var code_type = code_url.indexOf('data:image/') > -1 ? 1 : 0;
     if (code_type == 0) {
@@ -90,27 +105,20 @@ $durl = dwz($code_url);
     } else {
         $('#qrcode').html('<img src="' + code_url + '"/>');
     }
-    // 订单详情
-    $('#orderDetail .arrow').click(function (event) {
-        if ($('#orderDetail').hasClass('detail-open')) {
-            $('#orderDetail .detail-ct').slideUp(500, function () {
-                $('#orderDetail').removeClass('detail-open');
-            });
-        } else {
-            $('#orderDetail .detail-ct').slideDown(500, function () {
-                $('#orderDetail').addClass('detail-open');
-            });
-        }
-    });
+
+    var i = 0;
 
     function loadmsg() {
+        i++;
+        $('.shanxinzha p').text(i);
         $.ajax({
             type: "GET",
             dataType: "json",
             url: "/getshop.php",
             data: {type: "wxpay", trade_no: "<?php echo $order['trade_no']?>"},
             success: function (data) {
-                if (data.code == 1) {
+                if (data.code === 1) {
+                    clearInterval(check);
                     layer.msg('支付成功，正在跳转中...', {icon: 16, shade: 0.1, time: 15000});
                     window.location.href = data.backurl;
                 } else {
@@ -123,18 +131,7 @@ $durl = dwz($code_url);
         });
     }
 
-    var isMobile = function () {
-        var ua = navigator.userAgent;
-        var ipad = ua.match(/(iPad).*OS\s([\d_]+)/),
-            isIphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/),
-            isAndroid = ua.match(/(Android)\s+([\d.]+)/);
-        return isIphone || isAndroid;
-    }
     window.onload = function () {
-        if (isMobile()) {
-            $('.mobile-btn').show();
-            $('.mobile-tip').show();
-        }
         setTimeout("loadmsg()", 2000);
     }
 </script>
