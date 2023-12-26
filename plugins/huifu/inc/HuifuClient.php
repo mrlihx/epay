@@ -64,6 +64,31 @@ class HuifuClient
     }
 
     /**
+     * 上传文件
+     */
+    public function upload($path, $data, $file_path, $file_name)
+    {
+        $url = self::BASE_API_URL . $path;
+        $body = [
+            'sys_id' => $this->sys_id,
+            'product_id' => $this->product_id,
+            'data' => $data
+        ];
+        $file = new \CURLFile($file_path, '', $file_name);
+        $body['sign'] = $this->makeSign($data);
+        $response = $this->curlPost($url, $body, $file);
+        $result = json_decode($response, true);
+        if (!$result || empty($result['data']) || empty($result['sign'])) {
+            throw new \Exception("接口返回数据解析失败");
+        }
+        //print_r($result);
+        if (!$this->checkResponseSign($result['data'], $result['sign'])) {
+            throw new \Exception("接口返回数据验签失败");
+        }
+        return $result['data'];
+    }
+
+    /**
      * 发起POST请求
      * @param string $url 请求URL
      * @param array $body POST数据

@@ -37,9 +37,13 @@ switch ($act) {
         $list = $DB->getAll("SELECT * FROM pre_settle WHERE{$sql} order by id desc limit $offset,$limit");
 
         foreach ($list as $row){
-            if($row['type'] == "5" || $row['type'] == "6"){
-                $row['realmoney'] = round($row['realmoney'] / $conf['settle_usdt_rate'] - $conf['settle_usdt_miner_fee'], 2) . "u";
-            }
+            // 计算USDT
+            $usdt = round($row['realmoney'] / $conf['settle_usdt_rate'], 2);
+            // TRON USDT结算扣除旷工费
+            if($row['type'] == "5") $row['realmoney'] = round($usdt - $conf['settle_usdt_miner_fee'], 2) . "u";
+            // 币安结算
+            if($row['type'] == "6") $row['realmoney'] = $usdt . "u";
+
             $newlist[] = $row;
         }
 

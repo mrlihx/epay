@@ -1301,6 +1301,32 @@ $("select[name='sms_api']").change(function(){
     </div>
 </div>
 <div class="panel panel-primary">
+    <div class="panel-heading"><h3 class="panel-title">利润分成</h3></div>
+    <div class="panel-body">
+        <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">分成商户号</label>
+                <div class="col-sm-10"><input type="text" name="ps_uid" value="<?php echo $conf['ps_uid']; ?>" class="form-control"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">分成比例</label>
+                <div class="col-sm-10"><input type="text" name="ps_rate" value="<?php echo $conf['ps_rate']; ?>" class="form-control" placeholder="0.5等于50%"/></div>
+            </div><br/>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10"><input type="submit" name="submit" value="修改" class="btn btn-primary form-control"/><br/>
+                </div><br/>
+            </div>
+        </form>
+
+    </div>
+    <div class="panel-footer">
+        <span class="glyphicon glyphicon-info-sign"></span>
+        计算方式：100.00 * ((98-95) / 100 * 0.5) = 1.5<br/>订单金额 * ((通道成本-用户费率) / 100 * 分成比例) = 分成金额
+    </div>
+</div>
+<div class="panel panel-primary">
     <div class="panel-heading"><h3 class="panel-title">短网址</h3></div>
     <div class="panel-body">
         <form onsubmit="return saveSetting(this)" method="post" class="form-horizontal" role="form">

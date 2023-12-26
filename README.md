@@ -1,4 +1,4 @@
-## 彩虹易支付2023.8.31最新版
+## 彩虹易支付同步更新
 [彩虹易支付官方文档](https://www.kancloud.cn/net909/epay/2590520)
 
 安装项目到当前目录
@@ -28,25 +28,4 @@ location ^~ /plugins {
 location ^~ /includes {
   deny all;
 }
-```
-
-## IIS 伪静态
-```
-	<rule name="payrule1_rewrite" stopProcessing="true">
-		<match url="^(.[a-zA-Z0-9-_]+).html"/>
-		<conditions logicalGrouping="MatchAll">
-			<add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true"/>
-			<add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true"/>
-		</conditions>
-		<action type="Rewrite" url="index.php?mod={R:1}"/>
-	</rule>
-	<rule name="payrule2_rewrite" stopProcessing="true">
-		<match url="^pay/(.*)"/>
-		<conditions logicalGrouping="MatchAll">
-			<add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true"/>
-			<add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true"/>
-		</conditions>
-		<action type="Rewrite" url="pay.php?s={R:1}"/>
-	</rule>
-
 ```

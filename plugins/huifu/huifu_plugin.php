@@ -6,7 +6,7 @@ class huifu_plugin
 		'showname'    => '汇付斗拱平台', //支付插件显示名称
 		'author'      => '汇付天下', //支付插件作者
 		'link'        => 'https://paas.huifu.com/', //支付插件作者链接
-		'types'       => ['alipay','wxpay','bank'], //支付插件支持的支付方式，可选的有alipay,qqpay,wxpay,bank
+		'types'       => ['alipay','wxpay','bank','ecny'], //支付插件支持的支付方式，可选的有alipay,qqpay,wxpay,bank
 		'inputs' => [ //支付插件要求传入的参数以及参数显示名称，可选的有appid,appkey,appsecret,appurl,appmchid
 			'appid' => [
 				'name' => '汇付系统号',
@@ -38,6 +38,11 @@ class huifu_plugin
 			'1' => '自有公众号/小程序支付',
 			'2' => '托管小程序支付',
 		],
+		'select_bank' => [
+			'1' => '银联支付',
+			'2' => '快捷支付',
+			'3' => '网银支付',
+		],
 		'select' => null,
 		'note' => null, //支付密钥填写说明
 		'bindwxmp' => true, //是否支持绑定微信公众号
@@ -58,7 +63,15 @@ class huifu_plugin
 				return ['type'=>'jump','url'=>'/pay/wxpay/'.TRADE_NO.'/'];
 			}
 		}elseif($order['typename']=='bank'){
-			return ['type'=>'jump','url'=>'/pay/bank/'.TRADE_NO.'/'];
+			if(in_array('3',$channel['apptype'])){
+				return ['type'=>'jump','url'=>'/pay/bank/'.TRADE_NO.'/'];
+			}elseif(in_array('2',$channel['apptype'])){
+				return ['type'=>'jump','url'=>'/pay/quickpay/'.TRADE_NO.'/'];
+			}else{
+				return ['type'=>'jump','url'=>'/pay/unionpay/'.TRADE_NO.'/'];
+			}
+		}elseif($order['typename']=='ecny'){
+			return ['type'=>'jump','url'=>'/pay/ecny/'.TRADE_NO.'/'];
 		}
 	}
 
@@ -76,7 +89,15 @@ class huifu_plugin
 				return self::wxpay();
 			}
 		}elseif($order['typename']=='bank'){
-			return self::bank();
+			if(in_array('3',$channel['apptype'])){
+				return self::bank();
+			}elseif(in_array('2',$channel['apptype'])){
+				return self::quickpay();
+			}else{
+				return self::unionpay();
+			}
+		}elseif($order['typename']=='ecny'){
+			return self::ecny();
 		}
 	}
 
@@ -104,16 +125,11 @@ class huifu_plugin
 			'risk_check_data' => json_encode(['ip_addr' => $clientip]),
 		];
 		if($trade_type == 'T_JSAPI' || $trade_type == 'T_MINIAPP'){
-			$param['wx_data'] = json_encode(['sub_appid' => $sub_appid, 'sub_openid' => $sub_openid, 'device_info' => '4', 'spbill_create_ip' => $clientip]);
+			$param['wx_data'] = json_encode(['sub_openid' => $sub_openid, 'openid' => $sub_openid, 'device_info' => '4', 'spbill_create_ip' => $clientip]);
 		}elseif($trade_type == 'A_JSAPI'){
 			$param['alipay_data'] = json_encode(['buyer_id' => $sub_openid]);
-		}
-
-		if($_SESSION[TRADE_NO.'_pay']){
-			$result = $_SESSION[TRADE_NO.'_pay'];
-		}else{
-			
-			$_SESSION[TRADE_NO.'_pay'] = $result;
+		}elseif($trade_type == 'T_NATIVE'){
+			$param['wx_data'] = json_encode(['product_id' => '01001']);
 		}
 
 		return \lib\Payment::lockPayData(TRADE_NO, function() use($client, $param, $trade_type) {
@@ -165,7 +181,7 @@ class huifu_plugin
 
 		if(!$channel['appwxmp']){
 			try{
-				$jump_url = self::hostingOrder();
+				$jump_url = self::hostingOrder('T_JSAPI', 'M');
 			}catch(Exception $ex){
 				return ['type'=>'error','msg'=>'微信支付下单失败！'.$ex->getMessage()];
 			}
@@ -241,7 +257,8 @@ class huifu_plugin
 			return ['type'=>'scheme','page'=>'wxpay_mini','url'=>$code_url];
 		}elseif(in_array('2',$channel['apptype'])){
 			try{
-				$code_url = self::wxapphosting();
+				$result = self::wxapphosting();
+				$code_url = $result['scheme_code'];
 			}catch(Exception $ex){
 				return ['type'=>'error','msg'=>'微信支付下单失败！'.$ex->getMessage()];
 			}
@@ -272,14 +289,15 @@ class huifu_plugin
 			'huifu_id' => $channel['appmchid']?$channel['appmchid']:$channel['appid'],
 			'trans_amt' => $order['realmoney'],
 			'goods_desc' => $ordername,
+			'miniapp_data' => json_encode(['need_scheme'=>'Y']),
 			'notify_url' => $conf['localurl'] . 'pay/notify/' . TRADE_NO . '/',
 		];
 
 		return \lib\Payment::lockPayData(TRADE_NO, function() use($client, $param) {
 			$result = $client->requestApi('/v2/trade/hosting/payment/preorder', $param);
 
-			if(isset($result['resp_code']) && $result['resp_code']=='00000100') {
-				return $result['miniapp_data']['scheme_code'];
+			if(isset($result['resp_code']) && $result['resp_code']=='00000000') {
+				return json_decode($result['miniapp_data'], true);
 			}elseif(isset($result['resp_desc'])){
 				throw new Exception($result['resp_desc'].($result['bank_message']?' '.$result['bank_message']:''));
 			}else{
@@ -289,7 +307,7 @@ class huifu_plugin
 	}
 
 	//H5、PC预下单
-	static private function hostingOrder(){
+	static private function hostingOrder($trans_type, $request_type){
 		global $siteurl, $channel, $order, $ordername, $conf, $clientip;
 
 		require_once PAY_ROOT."inc/HuifuClient.php";
@@ -308,14 +326,15 @@ class huifu_plugin
 			'trans_amt' => $order['realmoney'],
 			'goods_desc' => $ordername,
 			'pre_order_type' => '1',
-			'hosting_data' => json_encode(['project_title'=>$conf['sitename'], 'project_id'=>'', 'callback_url'=>$siteurl. 'pay/return/' . TRADE_NO . '/']),
+			'hosting_data' => json_encode(['project_title'=>$conf['sitename'], 'project_id'=>'', 'callback_url'=>$siteurl. 'pay/return/' . TRADE_NO . '/', 'request_type'=>$request_type]),
 			'notify_url' => $conf['localurl'] . 'pay/notify/' . TRADE_NO . '/',
+			'trans_type' => $trans_type
 		];
 
 		return \lib\Payment::lockPayData(TRADE_NO, function() use($client, $param) {
 			$result = $client->requestApi('/v2/trade/hosting/payment/preorder', $param);
 
-			if(isset($result['resp_code']) && $result['resp_code']=='00000100') {
+			if(isset($result['resp_code']) && $result['resp_code']=='00000000') {
 				return $result['jump_url'];
 			}elseif(isset($result['resp_desc'])){
 				throw new Exception($result['resp_desc'].($result['bank_message']?' '.$result['bank_message']:''));
@@ -326,11 +345,129 @@ class huifu_plugin
 	}
 
 	//云闪付扫码支付
-	static public function bank(){
+	static public function unionpay(){
 		try{
 			$code_url = self::addOrder('U_NATIVE');
 		}catch(Exception $ex){
 			return ['type'=>'error','msg'=>'云闪付下单失败！'.$ex->getMessage()];
+		}
+
+		return ['type'=>'qrcode','page'=>'bank_qrcode','url'=>$code_url];
+	}
+
+	//快捷支付
+	static public function quickpay(){
+		global $siteurl, $channel, $order, $ordername, $conf, $clientip, $device;
+
+		if(checkmobile() || $device == 'mobile'){
+			$request_type = 'M';
+			$gw_chnnl_tp = '02';
+			$device_type = '1';
+		}else{
+			$request_type = 'P';
+			$gw_chnnl_tp = '01';
+			$device_type = '4';
+		}
+
+		require_once PAY_ROOT."inc/HuifuClient.php";
+		$config_info = [
+			'sys_id' =>  $channel['appid'],
+			'product_id' => $channel['appurl'],
+			'merchant_private_key' => $channel['appsecret'],
+			'huifu_public_key' => $channel['appkey'],
+		];
+		$client = new HuifuClient($config_info);
+
+		$param = [
+			'req_seq_id' => TRADE_NO,
+			'req_date' => substr(TRADE_NO,0,8),
+			'huifu_id' => $channel['appmchid']?$channel['appmchid']:$channel['appid'],
+			'trans_amt' => $order['realmoney'],
+			'goods_desc' => $ordername,
+			'request_type' => $request_type,
+			'extend_pay_data' => json_encode(['goods_short_name'=>$order['name'], 'gw_chnnl_tp'=>$gw_chnnl_tp, 'biz_tp'=>'100099']),
+			'terminal_device_data' => json_encode(['device_type'=>$device_type, 'device_ip'=>$clientip]),
+			'risk_check_data' => json_encode(['ip_addr' => $clientip]),
+			'notify_url' => $conf['localurl'] . 'pay/notify/' . TRADE_NO . '/',
+			'front_url' => $siteurl . 'pay/return/' . TRADE_NO . '/',
+		];
+
+		try{
+			$jump_url = \lib\Payment::lockPayData(TRADE_NO, function() use($client, $param) {
+				$result = $client->requestApi('/v2/trade/onlinepayment/quickpay/frontpay', $param);
+	
+				if(isset($result['resp_code']) && ($result['resp_code']=='00000000' || $result['resp_code']=='00000100')) {
+					return $result['form_url'];
+				}elseif(isset($result['resp_desc'])){
+					throw new Exception($result['resp_desc'].($result['bank_message']?' '.$result['bank_message']:''));
+				}else{
+					throw new Exception('返回数据解析失败');
+				}
+			});
+			return ['type'=>'jump','url'=>$jump_url];
+		}catch(Exception $ex){
+			return ['type'=>'error','msg'=>'快捷支付下单失败！'.$ex->getMessage()];
+		}
+	}
+
+	//网银支付
+	static public function bank(){
+		global $siteurl, $channel, $order, $ordername, $conf, $clientip, $device;
+
+		if(checkmobile() || $device == 'mobile'){
+			$gw_chnnl_tp = '02';
+			$device_type = '1';
+		}else{
+			$gw_chnnl_tp = '01';
+			$device_type = '4';
+		}
+
+		require_once PAY_ROOT."inc/HuifuClient.php";
+		$config_info = [
+			'sys_id' =>  $channel['appid'],
+			'product_id' => $channel['appurl'],
+			'merchant_private_key' => $channel['appsecret'],
+			'huifu_public_key' => $channel['appkey'],
+		];
+		$client = new HuifuClient($config_info);
+
+		$param = [
+			'req_seq_id' => TRADE_NO,
+			'req_date' => substr(TRADE_NO,0,8),
+			'huifu_id' => $channel['appmchid']?$channel['appmchid']:$channel['appid'],
+			'trans_amt' => $order['realmoney'],
+			'goods_desc' => $ordername,
+			'extend_pay_data' => json_encode(['goods_short_name'=>$order['name'], 'gw_chnnl_tp'=>$gw_chnnl_tp, 'biz_tp'=>'100099']),
+			'terminal_device_data' => json_encode(['device_type'=>$device_type, 'device_ip'=>$clientip]),
+			'risk_check_data' => json_encode(['ip_addr' => $clientip]),
+			'notify_url' => $conf['localurl'] . 'pay/notify/' . TRADE_NO . '/',
+			'front_url' => $siteurl . 'pay/return/' . TRADE_NO . '/',
+		];
+
+		try{
+			$jump_url = \lib\Payment::lockPayData(TRADE_NO, function() use($client, $param) {
+				$result = $client->requestApi('/v2/trade/onlinepayment/banking/frontpay', $param);
+	
+				if(isset($result['resp_code']) && ($result['resp_code']=='00000000' || $result['resp_code']=='00000100')) {
+					return $result['form_url'];
+				}elseif(isset($result['resp_desc'])){
+					throw new Exception($result['resp_desc'].($result['bank_message']?' '.$result['bank_message']:''));
+				}else{
+					throw new Exception('返回数据解析失败');
+				}
+			});
+			return ['type'=>'jump','url'=>$jump_url];
+		}catch(Exception $ex){
+			return ['type'=>'error','msg'=>'网银支付下单失败！'.$ex->getMessage()];
+		}
+	}
+
+	//数字人民币支付
+	static public function ecny(){
+		try{
+			$code_url = self::addOrder('D_NATIVE');
+		}catch(Exception $ex){
+			return ['type'=>'error','msg'=>'数字人民币下单失败！'.$ex->getMessage()];
 		}
 
 		return ['type'=>'qrcode','page'=>'bank_qrcode','url'=>$code_url];
