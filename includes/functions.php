@@ -1464,4 +1464,5 @@ function EnzoProfitSharing($srow)
     $profit = $money * $profit_rate; // 分成金额
 
     changeUserMoney($conf['ps_uid'], $profit, true, '系统分成', $srow['uid']."_".$money."×".$profit_rate."=".$profit);
+
 }
