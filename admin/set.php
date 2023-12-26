@@ -1179,7 +1179,7 @@ $("select[name='sms_api']").change(function(){
     </div>
     <div class="panel-footer">
         <span class="glyphicon glyphicon-info-sign"></span>
-        本页面所有功能都需要设置EnzoAPI。<br/>
+        TelegramBot消息推送、USDT转账功能需要设置EnzoAPI。<br/>
     </div>
 </div>
 
