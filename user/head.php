@@ -221,7 +221,9 @@ switch($conf['user_style']){
                         <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
                             <span>其他</span>
                         </li>
-                        <?php if($conf['invite_open']==1){?>
+                        <?php
+                        $groupconfig = getGroupConfig($userrow['gid']);
+                        if($conf['invite_open']==1 || $groupconfig['invite_open'] == 1){?>
                             <li class="<?php echo checkIfActive('invite')?>">
                                 <a href="invite.php">
                                     <i class="fa fa-share-alt fa-fw"></i>

@@ -5,8 +5,8 @@ $title='邀请返现';
 include './head.php';
 ?>
 <?php
-if(!$conf['invite_open'])exit('未开启邀请返现功能');
 $groupconfig = getGroupConfig($userrow['gid']);
+if(!$conf['invite_open']) if(!$groupconfig['invite_open']) exit('未开启邀请返现功能');
 $conf = array_merge($conf, $groupconfig);
 
 $invite_url = $siteurl.'?invite='.urlencode(get_invite_code($uid));
