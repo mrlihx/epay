@@ -300,3 +300,7 @@ CREATE TABLE IF NOT EXISTS `pay_complain` (
   UNIQUE KEY `thirdid` (`thirdid`),
   KEY `addtime` (`addtime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `pre_user`
+DROP COLUMN `ref_uid`,
+DROP COLUMN `aff`;

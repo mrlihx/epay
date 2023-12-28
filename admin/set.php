@@ -1234,6 +1234,11 @@ $("select[name='sms_api']").change(function(){
                 <div class="col-sm-10"><select class="form-control" name="telegram_obuser" default="<?php echo $conf['telegram_obuser']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
             </div><br/>
 
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Bot邀请好友</label>
+                <div class="col-sm-10"><select class="form-control" name="telegram_invite" default="<?php echo $conf['telegram_invite']?>"><option value="0">关闭</option><option value="1">开启</option></select></div>
+            </div><br/>
+
 <!--            <div class="form-group">-->
 <!--                <label class="col-sm-2 control-label">交易分析推送时间</label>-->
 <!--                <div class="col-sm-10"><input type="text" name="telegram_tapushtime" value="--><?php //echo $conf['telegram_tapushtime']; ?><!--" class="form-control" placeholder="单位:分"/></div>-->
