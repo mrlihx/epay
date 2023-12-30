@@ -107,16 +107,20 @@ if (!file_exists(ROOT . 'install/install.lock') && file_exists(ROOT . 'install/i
     exit;
 }
 
-if ($conf['cdnpublic'] == 1) {
+if ($conf['cdnpublic'] == 0) {
+$cdnpublic = '../assets/static/';
+} elseif ($conf['cdnpublic'] == 1) {
     $cdnpublic = '//lib.baomitu.com/';
 } elseif ($conf['cdnpublic'] == 2) {
     $cdnpublic = 'https://cdn.bootcdn.net/ajax/libs/';
+} elseif ($conf['cdnpublic'] == 3) {
+    $cdnpublic = '//cdn.staticfile.org/';
 } elseif ($conf['cdnpublic'] == 4) {
     $cdnpublic = '//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/';
 } elseif ($conf['cdnpublic'] == 66) {
     $cdnpublic = 'https://static.tennsey.cn/pay/';
 } else {
-    $cdnpublic = '//cdn.staticfile.org/';
+    $cdnpublic = '../assets/static/';
 }
 
 ?>

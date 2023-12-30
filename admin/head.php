@@ -1,18 +1,21 @@
 <?php
 @header('Content-Type: text/html; charset=UTF-8');
 
-$admin_cdnpublic = 66;
+$admin_cdnpublic = 0;
 if ($admin_cdnpublic == 1) {
     $cdnpublic = '//lib.baomitu.com/';
 } elseif ($admin_cdnpublic == 2) {
     $cdnpublic = 'https://cdn.bootcdn.net/ajax/libs/';
+} elseif ($admin_cdnpublic == 3) {
+    $cdnpublic = '//cdn.staticfile.org/';
 } elseif ($admin_cdnpublic == 4) {
     $cdnpublic = '//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/';
 } elseif ($admin_cdnpublic == 66) {
     $cdnpublic = 'https://static.tennsey.cn/pay/';
 } else {
-    $cdnpublic = '//cdn.staticfile.org/';
+    $cdnpublic = '../assets/static/';
 }
+
 ?>
     <!DOCTYPE html>
     <html lang="zh-cn">
