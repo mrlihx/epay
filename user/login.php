@@ -99,14 +99,16 @@ $cdnpublic = "https://static.tennsey.cn/pay/";
                                     <ul class="nav nav-tabs nav-justified" role="tablist">
                                         <li class="nav-item">
                                             <a class="nav-link <?php echo ($_GET['m'] == "key") ? '' : 'active'; ?>" href="login.php" role="tab">
-                                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                                                <span class="d-none d-sm-block">账号登录</span>
+                                                账号登录
+<!--                                                <span class="d-block d-sm-none"><i class="fas fa-user"></i></span>-->
+<!--                                                <span class="d-none d-sm-block">账号登录</span>-->
                                             </a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link <?php echo ($_GET['m'] == "key") ? 'active' : ''; ?>" href="?m=key" role="tab">
-                                                <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                                                <span class="d-none d-sm-block">秘钥登录</span>
+                                                秘钥登录
+<!--                                                <span class="d-block d-sm-none"><i class="far fa-user"></i></span>-->
+<!--                                                <span class="d-none d-sm-block">秘钥登录</span>-->
                                             </a>
                                         </li>
                                     </ul>
