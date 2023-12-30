@@ -108,7 +108,7 @@ if (!file_exists(ROOT . 'install/install.lock') && file_exists(ROOT . 'install/i
 }
 
 if ($conf['cdnpublic'] == 0) {
-$cdnpublic = '../assets/static/';
+    $cdnpublic = '../assets/static/';
 } elseif ($conf['cdnpublic'] == 1) {
     $cdnpublic = '//lib.baomitu.com/';
 } elseif ($conf['cdnpublic'] == 2) {
