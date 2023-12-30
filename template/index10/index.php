@@ -88,21 +88,7 @@ if(!defined('IN_CRONLITE'))exit();
 							<img class="img3" src="<?php echo STATIC_ROOT?>picture/payment_4.png" alt="<?php echo $conf['sitename']?>-QQ钱包免签约扫码H5支付" draggable="false" />
 						</a>
 					</li>
-					<li class="left payment_item5">
-						<a href="javascript:;">
-							<img class="img3" src="<?php echo STATIC_ROOT?>picture/payment_5.png" alt="<?php echo $conf['sitename']?>-免签约京东支付" draggable="false" />
-						</a>
-					</li>
-					<li class="left payment_item6">
-						<a href="javascript:;">
-							<img class="img3" src="<?php echo STATIC_ROOT?>picture/payment_6.png" alt="<?php echo $conf['sitename']?>-免签约百度钱包支付" draggable="false" />
-						</a>
-					</li>
-					<li class="left payment_item7">
-						<a href="javascript:;">
-							<img class="img2" src="<?php echo STATIC_ROOT?>picture/payment_7.png" alt="<?php echo $conf['sitename']?>-免签约财付通支付" draggable="false" />
-						</a>
-					</li>
+
 					<li class="left payment_item8">
 						<a href="javascript:;">
 							正在接入...
@@ -118,7 +104,7 @@ if(!defined('IN_CRONLITE'))exit();
 					<span class="title_common about_title pingFang"><?php echo $conf['sitename']?>简介</span>
 					<span class="about_line right"></span>
 					<div class="about_txt">
-						<p class="pingFang"><?php echo $conf['orgname']?>成立于2018年，<?php echo $conf['sitename']?>（<?php echo $_SERVER['HTTP_HOST']?>）。</p>
+						<p class="pingFang"><?php echo $conf['orgname']?>成立于2020年，<?php echo $conf['sitename']?>（<?php echo $_SERVER['HTTP_HOST']?>）。</p>
 						<p class="pingFang"><?php echo $conf['sitename']?>平台主要服务于互联网和移动互联网领域，为网页游戏、手机游戏、阅读、音乐、交友、教育等移动应用提供综合计费营销服务，创新、诚信、灵和活多元,创新是企业发展的灵魂。</p>
 						<p class="pingFang">我们打破了传统聚合支付网站几年来一成不变的局面，建立了新一代聚合支付的行业方向，我们将引领聚合支付交易过程的个性化、自动化、工具化等。作为业内最善于创新的网站，力争成为行业的佼佼者。</p>
 					</div>
