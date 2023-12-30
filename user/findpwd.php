@@ -95,7 +95,7 @@ $cdnpublic = "https://static.tennsey.cn/pay/";
                             </div>
 
                             <div class="mt-4 pt-3 text-center">
-                                <p class="text-muted mb-0">想起密码了 ? <a href="login.php" class="fw-semibold text-decoration-underline"> 返回登录 </a></p>
+                                <p class="text-muted mb-0">还记得吗 ? <a href="login.php" class="fw-semibold text-decoration-underline"> 返回登录 </a></p>
                             </div>
                         </div>
                     </div>
