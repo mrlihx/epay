@@ -142,6 +142,10 @@ $(document).ready(function(){
 				title: '注册时间'
 			},
             {
+                field: 'income',
+                title: '邀请收入'
+            },
+            {
                 field: 'state',
                 title: '状态'
             },

@@ -1,13 +1,15 @@
 <?php
 @header('Content-Type: text/html; charset=UTF-8');
 
-$admin_cdnpublic = 1;
+$admin_cdnpublic = 66;
 if ($admin_cdnpublic == 1) {
     $cdnpublic = '//lib.baomitu.com/';
 } elseif ($admin_cdnpublic == 2) {
     $cdnpublic = 'https://cdn.bootcdn.net/ajax/libs/';
 } elseif ($admin_cdnpublic == 4) {
     $cdnpublic = '//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/';
+} elseif ($admin_cdnpublic == 66) {
+    $cdnpublic = 'https://static.tennsey.cn/pay/';
 } else {
     $cdnpublic = '//cdn.staticfile.org/';
 }

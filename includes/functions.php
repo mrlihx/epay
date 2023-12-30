@@ -806,7 +806,6 @@ function processOrder($srow, $notify = true)
         $typeRow = $DB->getRow("select * from pre_type where id=:id limit 1", [':id' => $srow['type']]);
         $srow['typeshowname'] = $typeRow['showname'];
         \lib\MsgNotice::send('order', $srow['uid'], ['trade_no' => $srow['trade_no'], 'out_trade_no' => $srow['out_trade_no'], 'name' => $srow['name'], 'money' => $srow['money'], 'realmoney' => $srow['realmoney'], 'type' => $srow['typeshowname'], 'time' => date('Y-m-d H:i:s'), 'addtime' => $srow['addtime'], 'notify' => $srow['notify']]);
-
         //邀请返现
         $upid = $DB->findColumn('user', 'upid', ['uid' => $srow['uid']]);
         if ($upid > 0) {
@@ -817,7 +816,7 @@ function processOrder($srow, $notify = true)
                 $invite_money = round($srow['money'] * $conf['invite_rate'] / 100, 2);
                 if ($invite_money > $reducemoney) $invite_money = $reducemoney;
                 if ($invite_money > 0) {
-                    changeUserMoney($upid, $invite_money, true, '邀请返现', $srow['trade_no']);
+                    changeUserMoney($upid, $invite_money, true, '邀请返现', $srow['uid']);
                 }
             }
         }

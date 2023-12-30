@@ -12,101 +12,167 @@ if($conf['reg_open']==0)sysmsg('未开放商户申请');
 
 $csrf_token = md5(mt_rand(0,999).time());
 $_SESSION['csrf_token'] = $csrf_token;
+
+$cdnpublic = "https://static.tennsey.cn/pay/";
 ?>
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html lang="zh-cn">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>申请商户 | <?php echo $conf['sitename']?></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <link rel="stylesheet" href="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="<?php echo $cdnpublic?>animate.css/3.5.2/animate.min.css" type="text/css" />
-    <link rel="stylesheet" href="<?php echo $cdnpublic?>font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
-    <link rel="stylesheet" href="<?php echo $cdnpublic?>simple-line-icons/2.4.1/css/simple-line-icons.min.css" type="text/css" />
-    <link rel="stylesheet" href="./assets/css/font.css" type="text/css" />
-    <link rel="stylesheet" href="./assets/css/app.css" type="text/css" />
-    <style>input:-webkit-autofill{-webkit-box-shadow:0 0 0px 1000px white inset;-webkit-text-fill-color:#333;}img.logo{width:14px;height:14px;margin:0 5px 0 3px;}</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="<?php echo $cdnpublic?>bs5/libs/alertifyjs/build/css/alertify.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $cdnpublic?>bs5/libs/alertifyjs/build/css/themes/default.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo $cdnpublic?>bs5/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $cdnpublic?>bs5/css/icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $cdnpublic?>bs5/css/app.min.css" id="app-style" rel="stylesheet" type="text/css"/>
 </head>
 <body>
+<div class="auth-bg-basic d-flex align-items-center min-vh-100">
+    <div class="bg-overlay bg-light"></div>
+    <div class="container">
+        <div class="d-flex flex-column min-vh-100 py-5 px-3">
+            <div class="row justify-content-center">
+                <div class="col-xl-5">
+                    <div class="text-center text-muted mb-2">
+                        <div class="pb-3">
+                            <a href="/"><span class="logo-lg"><img src="<?php echo $cdnpublic?>bs5/images/logo-sm.svg" alt="" height="24"> <span class="logo-txt"><?php echo $conf['sitename']?></span></span></a>
+                            <p class="text-muted font-size-15 w-75 mx-auto mt-3 mb-0">Register</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center my-auto">
+                <div class="col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-transparent shadow-none border-0">
+                        <div class="card-body">
+                            <div class="py-3">
+                                <div class="text-center">
+                                    <h5 class="mb-0">注册账号</h5>
+                                    <p class="text-muted mt-2">Register in to continue to user.</p>
+                                </div>
+                                <input type="hidden" name="csrf_token" value="<?php echo $csrf_token?>"><input type="hidden" name="verifytype" value="<?php echo $conf['verifytype']?>">
 
-<div class="modal inmodal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+                                <div class="text-center">
+                                    <p class="mb-0">
+                                    <?php if($conf['reg_pay']){?><div class="wrapper">商户申请价格为：<b><?php echo $conf['reg_pay_price']?></b>元</div><?php }?>
+                                    </p>
+                                </div>
+
+
+                                <?php if($conf['verifytype']==1){?>
+                                <div class="form-floating form-floating-custom mb-3">
+                                    <input type="text" class="form-control" name="phone" id="phoneInput" placeholder="登录手机" required>
+                                    <label for="emailInput">登录手机</label>
+                                    <div class="form-floating-icon">
+                                        <i class="uil uil-envelope-alt"></i>
+                                    </div>
+                                </div>
+                                <div class="form-floating form-floating-custom mb-3 d-flex align-items-center">
+                                    <input type="text" name="code" class="form-control" placeholder="短信验证码" required>
+                                    <label for="usernameInput">短信验证码</label>
+                                    <div class="form-floating-icon">
+                                        <i class="uil uil-shield"></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-primary" id="sendcode">获取验证码</button>
+                                    </div>
+                                </div>
+                                <?php }else{?>
+                                <div class="form-floating form-floating-custom mb-3">
+                                    <input type="email" class="form-control" name="email" id="emailInput" placeholder="登录邮箱" required>
+                                    <label for="emailInput">登录邮箱</label>
+                                    <div class="form-floating-icon">
+                                        <i class="uil uil-envelope-alt"></i>
+                                    </div>
+                                </div>
+                                <div class="form-floating form-floating-custom mb-3 d-flex align-items-center">
+                                    <input type="text" name="code" class="form-control" placeholder="邮箱验证码" required>
+                                    <label for="usernameInput">邮箱验证码</label>
+                                    <div class="form-floating-icon">
+                                        <i class="uil uil-shield"></i>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-primary" id="sendcode">获取验证码</button>
+                                    </div>
+                                </div>
+                                <?php }?>
+
+                                <div class="form-floating form-floating-custom mb-3">
+                                    <input type="password" class="form-control" name="pwd" id="passwordInput" placeholder="登录密码" required>
+                                    <label for="passwordInput">登录密码</label>
+                                    <div class="form-floating-icon">
+                                        <i class="uil uil-padlock"></i>
+                                    </div>
+                                </div>
+                                <div class="form-floating form-floating-custom mb-3">
+                                    <input type="password" class="form-control" name="pwd2" id="passwordRepeat" placeholder="再次输入密码" required>
+                                    <label for="passwordRepeat">再次输入密码</label>
+                                    <div class="form-floating-icon">
+                                        <i class="uil uil-padlock"></i>
+                                    </div>
+                                </div>
+                                <?php if($conf['reg_open']==2){?>
+                                <div class="form-floating form-floating-custom mb-3">
+                                    <input type="text" class="form-control" name="invitecode" placeholder="邀请码" required>
+                                    <label for="inviteRepeat">邀请码</label>
+                                    <div class="form-floating-icon">
+                                        <i class="uil uil-user-plus"></i>
+                                    </div>
+                                </div>
+                                <?php }?>
+
+                                <div class="py-1">
+                                    <p class="mb-0">注册即表示您同意<?php echo $conf['sitename']?> <a href="../agreement.html" class="text-primary">使用条款</a></p>
+                                </div>
+                                <div class="mt-3">
+                                    <button id="submit" class="btn btn-primary w-100" type="submit">注册</button>
+                                </div>
+                                <div class="mt-4 pt-3 text-center">
+                                    <p class="text-muted mb-0">已经有账号了 ? <a href="login.php" class="fw-semibold text-decoration-underline"> 登录 </a></p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="mt-4 mt-md-5 text-center">
+                        <p class="mb-0">©
+                            <script>document.write(new Date().getFullYear())</script>
+                            <i class="mdi mdi-heart text-danger"></i> <a href="/"><?php echo $conf['sitename']?></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
-                </button>
-                <h4 class="modal-title">注册须知</h4>
+                <h5 class="modal-title" id="exampleModalScrollableTitle">注册须知</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <?php echo $conf['zhuce']?>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">知道了</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="app app-header-fixed  ">
-    <div class="container w-xxl w-auto-xs" ng-controller="SigninFormController" ng-init="app.settings.container = false;">
-        <span class="navbar-brand block m-t" id="sitename"><?php echo $conf['sitename']?></span>
-        <div class="m-b-lg">
-            <div class="wrapper text-center">
-                <strong>自助申请商户</strong>
-            </div>
-            <form name="form" class="form-validation"><input type="hidden" name="csrf_token" value="<?php echo $csrf_token?>"><input type="hidden" name="verifytype" value="<?php echo $conf['verifytype']?>">
-                <?php if($conf['reg_pay']){?><div class="wrapper">商户申请价格为：<b><?php echo $conf['reg_pay_price']?></b>元</div><?php }?>
-                <div class="list-group list-group-sm swaplogin">
-                    <?php if($conf['verifytype']==1){?>
-                        <div class="list-group-item">
-                            <input type="text" name="phone" placeholder="手机号码（同时作为登录账号）" class="form-control no-border" required>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="input-group">
-                                <input type="text" name="code" placeholder="短信验证码" class="form-control no-border" required>
-                                <a class="input-group-addon" id="sendcode">获取验证码</a>
-                            </div>
-                        </div>
-                    <?php }else{?>
-                        <div class="list-group-item">
-                            <input type="email" name="email" placeholder="邮箱（同时作为登录账号）" class="form-control no-border" required>
-                        </div>
-                        <div class="list-group-item">
-                            <div class="input-group">
-                                <input type="text" name="code" placeholder="邮箱验证码" class="form-control no-border" required>
-                                <a class="input-group-addon" id="sendcode">获取验证码</a>
-                            </div>
-                        </div>
-                    <?php }?>
-                    <div class="list-group-item">
-                        <input type="password" name="pwd" placeholder="请输入你的密码" class="form-control no-border" required>
-                    </div>
-                    <div class="list-group-item">
-                        <input type="password" name="pwd2" placeholder="请再次输入密码" class="form-control no-border" required>
-                    </div>
-                    <?php if($conf['reg_open']==2){?><div class="list-group-item">
-                        <input type="text" name="invitecode" placeholder="邀请码" class="form-control no-border" required>
-                    </div><?php }?>
-                    <div class="checkbox m-b-md m-t-none">
-                        <label class="i-checks">
-                            <input type="checkbox" ng-model="agree" checked required><i></i> 同意<a href="../agreement.html" target="_blank">我们的条款</a>
-                        </label>
-                    </div>
-                </div>
-                <button type="button" id="submit" class="btn btn-lg btn-primary btn-block" ng-click="login()" ng-disabled='form.$invalid'>立即注册</button>
-                <a href="login.php" ui-sref="access.signup" class="btn btn-lg btn-default btn-block">返回登录</a>
-            </form>
-        </div>
-        <div class="text-center">
-            <p>
-                <small class="text-muted"><a href="/"><?php echo $conf['sitename']?></a><br>&copy; 2016~<?php echo date("Y")?></small>
-            </p>
-        </div>
-    </div>
-</div>
-<script src="<?php echo $cdnpublic?>jquery/3.4.1/jquery.min.js"></script>
-<script src="<?php echo $cdnpublic?>twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<script src="<?php echo $cdnpublic?>jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="<?php echo $cdnpublic?>bs5/js/bootstrap.bundle.min.js"></script>
+<script src="<?php echo $cdnpublic?>bs5/libs/metismenujs/metismenujs.min.js"></script>
+<script src="<?php echo $cdnpublic?>bs5/libs/simplebar/simplebar.min.js"></script>
+<script src="<?php echo $cdnpublic?>bs5/libs/feather-icons/feather.min.js"></script>
+<script src="<?php echo $cdnpublic?>bs5/libs/alertifyjs/build/alertify.min.js"></script>
+<script src="<?php echo $cdnpublic?>bs5/js/jquery-3.6.0.min.js"></script>
 <script src="<?php echo $cdnpublic?>layer/3.1.1/layer.min.js"></script>
 <script src="//static.geetest.com/static/tools/gt.js"></script>
 <script>
@@ -114,7 +180,7 @@ $_SESSION['csrf_token'] = $csrf_token;
         var countdown=60;
         settime(obj);
         function settime(obj) {
-            if (countdown == 0) {
+            if (countdown === 0) {
                 $(obj).attr("data-lock", "false");
                 $(obj).attr("disabled",false);
                 $(obj).text("获取验证码");
@@ -148,11 +214,11 @@ $_SESSION['csrf_token'] = $csrf_token;
                 dataType : 'json',
                 success : function(data) {
                     layer.close(ii);
-                    if(data.code == 0){
+                    if(data.code === 0){
                         new invokeSettime("#sendsms");
-                        layer.msg('发送成功，请注意查收！');
+                        alertify.success('发送成功，请注意查收！');
                     }else{
-                        layer.alert(data.msg);
+                        alertify.error(data.msg);
                         captchaObj.reset();
                     }
                 }
@@ -160,15 +226,15 @@ $_SESSION['csrf_token'] = $csrf_token;
         });
         $('#sendcode').click(function () {
             if ($(this).attr("data-lock") === "true") return;
-            if($("input[name='verifytype']").val()=='1'){
+            if($("input[name='verifytype']").val()==='1'){
                 sendto=$("input[name='phone']").val();
-                if(sendto==''){layer.alert('手机号码不能为空！');return false;}
-                if(sendto.length!=11){layer.alert('手机号码不正确！');return false;}
+                if(sendto===''){alertify.error('手机号码不能为空！');return false;}
+                if(sendto.length!==11){alertify.error('手机号码不正确！');return false;}
             }else{
                 sendto=$("input[name='email']").val();
-                if(sendto==''){layer.alert('邮箱不能为空！');return false;}
+                if(sendto===''){alertify.error('邮箱不能为空！');return false;}
                 var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
-                if(!reg.test(sendto)){layer.alert('邮箱格式不正确！');return false;}
+                if(!reg.test(sendto)){alertify.error('邮箱格式不正确！');return false;}
             }
             captchaObj.verify();
         });
@@ -182,14 +248,14 @@ $_SESSION['csrf_token'] = $csrf_token;
             var pwd=$("input[name='pwd']").val();
             var pwd2=$("input[name='pwd2']").val();
             var invitecode=$("input[name='invitecode']").val();
-            if(email=='' || phone=='' || code=='' || pwd=='' || pwd2==''){layer.alert('请确保各项不能为空！');return false;}
-            if($("input[name='invitecode']").length>0 && invitecode==''){layer.alert('邀请码不能为空！');return false;}
-            if(pwd!=pwd2){layer.alert('两次输入密码不一致！');return false;}
-            if($("input[name='verifytype']").val()=='1'){
-                if(phone.length!=11){layer.alert('手机号码不正确！');return false;}
+            if(email==='' || phone==='' || code==='' || pwd==='' || pwd2===''){alertify.error('请确保各项不能为空！');return false;}
+            if($("input[name='invitecode']").length>0 && invitecode===''){alertify.error('邀请码不能为空！');return false;}
+            if(pwd!=pwd2){alertify.error('两次输入密码不一致！');return false;}
+            if($("input[name='verifytype']").val()==='1'){
+                if(phone.length!=11){alertify.error('手机号码不正确！');return false;}
             }else{
                 var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
-                if(!reg.test(email)){layer.alert('邮箱格式不正确！');return false;}
+                if(!reg.test(email)){alertify.error('邮箱格式不正确！');return false;}
             }
             var ii = layer.load();
             $(this).attr("data-lock", "true");
@@ -202,11 +268,11 @@ $_SESSION['csrf_token'] = $csrf_token;
                 success : function(data) {
                     $("#submit").attr("data-lock", "false");
                     layer.close(ii);
-                    if(data.code == 1){
+                    if(data.code === 1){
                         layer.alert('恭喜你，商户申请成功！', {icon: 1}, function(){
                             window.location.href="./login.php";
                         });
-                    }else if(data.code == 2){
+                    }else if(data.code === 2){
                         var paymsg = '';
                         $.each(data.paytype, function(key, value) {
                             paymsg+='<button class="btn btn-default btn-block" onclick="window.location.href=\'../submit2.php?typeid='+key+'&trade_no='+data.trade_no+'\'" style="margin-top:10px;"><img width="20" src="../assets/icon/'+value.name+'.ico" class="logo">'+value.showname+'</button>';
@@ -217,7 +283,7 @@ $_SESSION['csrf_token'] = $csrf_token;
                             closeBtn: false
                         });
                     }else{
-                        layer.alert(data.msg);
+                        alertify.error(data.msg);
                     }
                 }
             });
@@ -244,7 +310,7 @@ $_SESSION['csrf_token'] = $csrf_token;
             }
         });
         <?php if(!empty($conf['zhuce'])){?>
-        $('#myModal').modal('show');
+        $('#exampleModalScrollable').modal('show');
         <?php }?>
     });
 </script>

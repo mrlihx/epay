@@ -135,6 +135,7 @@ if($mod=='site'){
 	  <option value="1">360CDN</option>
 	  <option value="2">BootCDN</option>
 	  <option value="4">今日头条CDN</option>
+	  <option value="66">恩佐CDN</option>
 	  </select></div>
 	</div><br/>
       <div class="form-group">

@@ -895,6 +895,8 @@ switch ($act) {
                 $row['state'] = '<span style="color: red;">Inactive</span>';
             }
             unset($newlist['money']);
+            $records = $DB->getColumn("SELECT SUM(money) FROM pre_record WHERE `trade_no`='".$row['uid']."' AND `uid`='".$uid."' AND `action`='1' AND (`type`='邀请返现' OR `type`='下级分成')");
+            $row['income'] = round($records, 2);
             $newlist[] = $row;
         }
         exit(json_encode(['total'=>$total, 'rows'=>$newlist]));

@@ -113,7 +113,10 @@ if ($conf['cdnpublic'] == 1) {
     $cdnpublic = 'https://cdn.bootcdn.net/ajax/libs/';
 } elseif ($conf['cdnpublic'] == 4) {
     $cdnpublic = '//lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/';
+} elseif ($conf['cdnpublic'] == 66) {
+    $cdnpublic = 'https://static.tennsey.cn/pay/';
 } else {
     $cdnpublic = '//cdn.staticfile.org/';
 }
+
 ?>
