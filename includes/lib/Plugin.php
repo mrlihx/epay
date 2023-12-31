@@ -143,7 +143,7 @@ class Plugin {
 
     static public function refund($trade_no, $money, &$message){
         global $order,$channel,$DB;
-        if(!preg_match('/^(.[0-9]+)$/',$trade_no))return false;
+        if(!preg_match('/^(.[a-zA-Z0-9]+)$/',$trade_no))return false;
         $order = $DB->getRow("SELECT * FROM pre_order WHERE trade_no=:trade_no limit 1", [':trade_no'=>$trade_no]);
         if(!$order){
             $message = '该订单号不存在';
