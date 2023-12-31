@@ -23,7 +23,8 @@ if(isset($queryArr['__defend'])){
 }
 if(!\lib\Payment::verifySign($queryArr, $userrow['key']))sysmsg('签名校验失败，请返回重试！');
 
-if($userrow['status']==0 || $userrow['pay']==0)sysmsg('商户已封禁，无法支付！');
+if($userrow['status']==0)sysmsg('商户已封禁，无法支付！');
+if($userrow['pay']==0)sysmsg('商户无支付权限，无法支付！');
 
 if($userrow['pay']==2 && $conf['user_review']==1)sysmsg('商户没通过审核，请联系官方客服进行审核');
 
