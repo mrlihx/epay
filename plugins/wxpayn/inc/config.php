@@ -23,7 +23,7 @@ $wechatpay_config = [
 
 if(file_exists(PLUGIN_ROOT.$channel['plugin'].'/cert/'.$channel['appmchid'].'/apiclient_key.pem')){
     $wechatpay_config['merchantPrivateKeyFilePath'] = PLUGIN_ROOT.$channel['plugin'].'/cert/'.$channel['appmchid'].'/apiclient_key.pem';
-	$wechatpay_config['platformCertificateFilePath'] = PLUGIN_ROOT.$channel['plugin'].'/cert/'.$channel['appmchid'].'/cert.pem';
+    $wechatpay_config['platformCertificateFilePath'] = PLUGIN_ROOT.$channel['plugin'].'/cert/'.$channel['appmchid'].'/cert.pem';
 }
 
 return $wechatpay_config;

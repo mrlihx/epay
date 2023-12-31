@@ -533,4 +533,23 @@ class wxpaynp_plugin
 		}
 		return $newparam;
 	}
+
+	//投诉通知回调
+	static public function complainnotify(){
+		global $channel;
+
+		$wechatpay_config = require(PAY_ROOT.'inc/config.php');
+		try{
+			$client = new \WeChatPay\V3\BaseService($wechatpay_config);
+			$data = $client->notify();
+		} catch (Exception $e) {
+			$client->replyNotify(false, $e->getMessage());
+			exit;
+		}
+
+		$model = \lib\Complain\CommUtil::getModel($channel);
+		$model->refreshNewInfo($data['complaint_id'], $data['action_type']);
+
+		$client->replyNotify(true);
+	}
 }
