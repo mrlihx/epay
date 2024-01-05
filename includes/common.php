@@ -2,11 +2,11 @@
 //error_reporting(0);
 error_reporting(E_ERROR | E_PARSE | E_COMPILE_ERROR);
 if (defined('IN_CRONLITE')) return;
-define('VERSION', '3059');
-define('DB_VERSION', '2040');
-define('IN_CRONLITE', true);
-define('SYSTEM_ROOT', dirname(__FILE__) . '/');
-define('ROOT', dirname(SYSTEM_ROOT) . '/');
+define('VERSION'， '3059');
+define('DB_VERSION'， '2040');
+define('IN_CRONLITE'， true);
+define('SYSTEM_ROOT'， dirname(__FILE__) . '/');
+define('ROOT'， dirname(SYSTEM_ROOT) . '/');
 define('PAYPAGE_ROOT', SYSTEM_ROOT . 'pages/');
 define('TEMPLATE_ROOT', ROOT . 'template/');
 define('PLUGIN_ROOT', ROOT . 'plugins/');
@@ -106,9 +106,10 @@ if (!file_exists(ROOT . 'install/install.lock') && file_exists(ROOT . 'install/i
     sysmsg('<h2>检测到无 install.lock 文件</h2><ul><li><font size="4">如果您尚未安装本程序，请<a href="/install/">前往安装</a></font></li><li><font size="4">如果您已经安装本程序，请手动放置一个空的 install.lock 文件到 /install 文件夹下，<b>为了您站点安全，在您完成它之前我们不会工作。</b></font></li></ul><br/><h4>为什么必须建立 install.lock 文件？</h4>它是安装保护文件，如果检测不到它，就会认为站点还没安装，此时任何人都可以安装/重装你的网站。<br/><br/>');
     exit;
 }
+$domain = parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST);
 
 if ($conf['cdnpublic'] == 0) {
-    $cdnpublic = '../assets/static/';
+    $cdnpublic = $domain.'/assets/static/';
 } elseif ($conf['cdnpublic'] == 1) {
     $cdnpublic = '//lib.baomitu.com/';
 } elseif ($conf['cdnpublic'] == 2) {
