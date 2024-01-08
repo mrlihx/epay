@@ -13,7 +13,7 @@ if ($admin_cdnpublic == 1) {
 } elseif ($admin_cdnpublic == 66) {
     $cdnpublic = 'https://static.tennsey.cn/pay/';
 } else {
-    $cdnpublic = '../assets/static/';
+    $cdnpublic = $siteurl.'/assets/static/';
 }
 
 ?>

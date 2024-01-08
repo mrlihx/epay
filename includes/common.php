@@ -108,7 +108,7 @@ if (!file_exists(ROOT . 'install/install.lock') && file_exists(ROOT . 'install/i
 }
 
 if ($conf['cdnpublic'] == 0) {
-    $cdnpublic = '../assets/static/';
+    $cdnpublic = $siteurl.'assets/static/';
 } elseif ($conf['cdnpublic'] == 1) {
     $cdnpublic = '//lib.baomitu.com/';
 } elseif ($conf['cdnpublic'] == 2) {
@@ -120,7 +120,7 @@ if ($conf['cdnpublic'] == 0) {
 } elseif ($conf['cdnpublic'] == 66) {
     $cdnpublic = 'https://static.tennsey.cn/pay/';
 } else {
-    $cdnpublic = '../assets/static/';
+    $cdnpublic = $siteurl.'assets/static/';
 }
 
 ?>
